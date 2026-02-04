@@ -30,23 +30,21 @@ export const Header = () => {
           : "bg-transparent py-6"
       }`}
     >
-      {/* ✨ 修改 1：在父容器加上 relative，作為定位的參考點 */}
       <div className="container mx-auto px-6 flex items-center justify-between relative">
         
-        {/* 左側 Logo (即使變很長也不會影響中間) */}
+        {/* 左側 Logo */}
         <a href="#" className="font-display text-2xl font-bold text-foreground z-20">
           <span className="text-gradient"> GEORGE & MENGPIN STUDIO</span>
         </a>
 
-        {/* ✨ 修改 2：將 Nav 改為絕對定位 (absolute)，強制鎖定在正中央 */}
-        {/* left-1/2 top-1/2: 定位到父容器中心 */}
-        {/* -translate-x-1/2 -translate-y-1/2: 修正自身的偏移，達成完美置中 */}
+        {/* 中間導覽列 (絕對置中) */}
         <nav className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-muted-foreground hover:text-foreground transition-colors link-underline font-medium whitespace-nowrap"
+              // ✨ 修改重點：將 hover:text-foreground 改為 hover:text-primary
+              className="text-muted-foreground hover:text-primary transition-colors link-underline font-medium whitespace-nowrap"
             >
               {item.label}
             </a>
@@ -69,6 +67,7 @@ export const Header = () => {
         </button>
       </div>
 
+      {/* 手機版選單 */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white/95 backdrop-blur-md border border-white/20 shadow-xl mt-4 mx-6 rounded-xl p-6 animate-fade-in">
           <nav className="flex flex-col gap-4">
@@ -76,7 +75,8 @@ export const Header = () => {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-foreground font-medium py-2 border-b border-muted last:border-0"
+                // ✨ 手機版也可以順便加上 hover:text-primary
+                className="text-foreground hover:text-primary font-medium py-2 border-b border-muted last:border-0 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
