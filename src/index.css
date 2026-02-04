@@ -1,3 +1,5 @@
+/* src/index.css */
+
 /* 引入可愛的卡通字體 */
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
 
@@ -57,14 +59,20 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    
+    /* 🔥【修改重點】方法一：針對 html 強制鎖定寬度與隱藏溢出 */
+    overflow-x: hidden;
+    width: 100%;
   }
   
   body {
     font-family: 'Fredoka', sans-serif;
     @apply bg-background text-foreground antialiased;
     
-    /* ✨✨✨ 新增這一行：強制隱藏水平捲軸 ✨✨✨ */
+    /* 🔥【修改重點】方法一：針對 body 再次確保鎖定，並設定相對定位 */
     overflow-x: hidden;
+    width: 100%;
+    position: relative;
 
     /* 背景圓點 */
     background-image: radial-gradient(hsla(330, 80%, 65%, 0.1) 2px, transparent 2px);
