@@ -1,41 +1,38 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// 定義泡泡的資料結構
 interface Bubble {
   id: number;
   x: number;
   y: number;
   size: number;
-  direction: number; // 控制左右飄移
+  direction: number;
+  color: string;
 }
 
 export const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  
-  // 使用 Ref 來儲存最新的滑鼠位置，讓 setInterval 可以讀取到最新的座標
   const mousePositionRef = useRef({ x: 0, y: 0 });
   
-  // 1. 處理滑鼠移動與偵測 Hover 狀態
+  const colors = ["#FF69B4", "#FFD700", "#87CEEB"]; 
+
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
-      // 更新 State (給畫面渲染用)
       setMousePosition({ x: e.clientX, y: e.clientY });
-      // 更新 Ref (給計時器讀取用)
       mousePositionRef.current = { x: e.clientX, y: e.clientY };
     };
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // 偵測是否為可點擊元素
       if (
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
         target.closest("a") ||
         target.closest("button") ||
-        target.classList.contains("cursor-pointer")
+        target.classList.contains("cursor-pointer") ||
+        target.closest(".cartoon-card")
       ) {
         setIsHovering(true);
       } else {
@@ -45,78 +42,63 @@ export const CustomCursor = () => {
 
     window.addEventListener("mousemove", updateMousePosition);
     window.addEventListener("mouseover", handleMouseOver);
+    document.body.style.cursor = 'none';
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseover", handleMouseOver);
+      document.body.style.cursor = 'auto';
     };
   }, []);
 
-  // 2. ✨ 核心邏輯：連續泡泡產生器 ✨
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     if (isHovering) {
-      // 如果滑鼠在按鈕上，開啟計時器，每 50 毫秒產生一顆泡泡 (可調整快慢)
       interval = setInterval(() => {
         const { x, y } = mousePositionRef.current;
         const id = Date.now() + Math.random();
-        
-        // 稍微給一點隨機偏移，這樣手不動時，泡泡也會從游標周圍冒出來，比較自然
-        const randomOffsetX = (Math.random() * 20) - 10; 
-        const randomOffsetY = (Math.random() * 20) - 10;
+        const randomOffsetX = (Math.random() * 30) - 15; 
+        const randomOffsetY = (Math.random() * 30) - 15;
 
         const newBubble: Bubble = {
           id,
           x: x + randomOffsetX,
           y: y + randomOffsetY,
-          size: Math.random() * 10 + 5, // 大小隨機 5px ~ 15px
-          direction: Math.random() > 0.5 ? 1 : -1, // 隨機向左或向右飄
+          size: Math.random() * 15 + 8,
+          direction: Math.random() > 0.5 ? 1 : -1,
+          color: colors[Math.floor(Math.random() * colors.length)]
         };
 
         setBubbles((prev) => [...prev, newBubble]);
-
-        // 1秒後刪除該泡泡
         setTimeout(() => {
           setBubbles((prev) => prev.filter((b) => b.id !== id));
         }, 1000);
-      }, 50); // <-- 這裡控制頻率：50ms 產生一顆
+      }, 80);
     }
-
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isHovering]);
 
-  const heartColor = "#FF69B4"; // 粉紅色
+  const cursorColor = "#FF69B4"; 
 
   return (
     <>
-      {/* 1. 泡泡粒子層 */}
+      {/* 泡泡層 (不變) */}
       <AnimatePresence>
         {bubbles.map((bubble) => (
           <motion.div
             key={bubble.id}
-            initial={{ 
-              opacity: 1, 
-              x: bubble.x - bubble.size / 2,
-              y: bubble.y - bubble.size / 2, 
-              scale: 0.5 
-            }}
-            animate={{ 
-              opacity: 0, 
-              y: bubble.y - 100, // 往上飄 100px
-              x: bubble.x + (bubble.direction * 40), // 左右飄移幅度
-              scale: 1.2 
-            }}
+            initial={{ opacity: 1, x: bubble.x - bubble.size/2, y: bubble.y - bubble.size/2, scale: 0.5 }}
+            animate={{ opacity: 0, y: bubble.y - 120, x: bubble.x + (bubble.direction * 50), scale: 1.5, rotate: bubble.direction * 90 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 1, ease: "easeOut" }}
             style={{
               position: "fixed",
               width: bubble.size,
               height: bubble.size,
               borderRadius: "50%",
-              backgroundColor: heartColor,
+              backgroundColor: bubble.color,
               pointerEvents: "none",
               zIndex: 9997,
             }}
@@ -124,58 +106,38 @@ export const CustomCursor = () => {
         ))}
       </AnimatePresence>
 
-      {/* 2. 內圈：小實心愛心 */}
+      {/* 內圈：實心粉色愛心 */}
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[9999]"
-        style={{ color: heartColor }}
+        style={{ color: cursorColor }}
         animate={{
-          x: mousePosition.x - 8,
-          y: mousePosition.y - 8,
-          scale: isHovering ? 0 : 1, 
+          x: mousePosition.x - 12,
+          y: mousePosition.y - 12,
+          scale: isHovering ? 0.5 : 1,
+          rotate: isHovering ? [0, -10, 10, 0] : 0,
         }}
-        transition={{ type: "tween", ease: "backOut", duration: 0 }}
+        // ✨ 修改重點 1：調高 stiffness (300 -> 500) 和 damping (15 -> 25)
+        transition={{ type: "spring", stiffness: 500, damping: 25 }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          stroke="none"
-        >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       </motion.div>
 
-      {/* 3. 外圈：大果凍愛心 */}
+      {/* 外圈：透明白色大愛心 */}
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-[9998]"
-        style={{ color: heartColor }}
+        style={{ color: "white" }} 
         animate={{
-          x: mousePosition.x - 24,
-          y: mousePosition.y - 24,
-          scale: isHovering ? 1.5 : 1,
-          opacity: 1, 
+          x: mousePosition.x - 28,
+          y: mousePosition.y - 28,
+          scale: isHovering ? 1.8 : 1,
+          rotate: isHovering ? -15 : 0,
         }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 15,
-          mass: 0.5
-        }}
+        // ✨ 修改重點 2：調高 stiffness (150 -> 300) 和 damping (15 -> 25)
+        transition={{ type: "spring", stiffness: 300, damping: 25, mass: 0.8 }}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          fillOpacity={0.2} 
-          stroke="currentColor"
-          strokeWidth="0.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="white" fillOpacity={0.4} stroke="#FF69B4" strokeWidth="1">
           <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       </motion.div>

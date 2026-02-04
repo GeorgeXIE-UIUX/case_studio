@@ -34,7 +34,6 @@ export const FAQSection = () => {
 
   return (
     <section id="faq" className="section-padding bg-transparent relative">
-
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
@@ -45,39 +44,42 @@ export const FAQSection = () => {
           >
             <span className="text-gradient">常見問答</span>
           </motion.h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
             合作前你可能想知道的事情，這裡都有解答
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-6">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }} // 每次滑動觸發
+              viewport={{ once: false, amount: 0.3 }}
               transition={{ delay: index * 0.1 }}
-              className={`rounded-2xl border transition-all duration-300 ${
-                openFaq === index 
-                  ? "bg-primary/5 border-primary/50 shadow-md" 
-                  : "bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/30"
+              // ✨ 修改：使用 cartoon-card 樣式，點擊時邊框變色
+              className={`cartoon-card rounded-2xl transition-all duration-300 bg-white overflow-hidden ${
+                openFaq === index ? "border-primary" : ""
               }`}
             >
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left"
+                className="w-full px-8 py-6 flex items-center justify-between text-left"
               >
-                <span className={`font-display font-medium text-lg ${openFaq === index ? "text-primary" : "text-foreground"}`}>
+                <span className={`font-display font-bold text-xl ${openFaq === index ? "text-primary" : "text-foreground"}`}>
                   {faq.question}
                 </span>
                 <motion.div
                   animate={{ rotate: openFaq === index ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`p-2 rounded-full ${openFaq === index ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}
+                  className={`p-2 rounded-full border-2 ${
+                    openFaq === index 
+                      ? 'bg-primary text-white border-primary' 
+                      : 'bg-transparent border-muted text-muted-foreground'
+                  }`}
                 >
-                  <ChevronDown className="w-5 h-5" />
+                  <ChevronDown className="w-5 h-5 stroke-[3]" />
                 </motion.div>
               </button>
               
@@ -88,10 +90,10 @@ export const FAQSection = () => {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
                   >
-                    <div className="px-6 pb-6 pt-0">
-                      <p className="text-muted-foreground leading-relaxed border-t border-border/50 pt-4">
+                    <div className="px-8 pb-8 pt-0">
+                      <div className="w-full h-0 border-t-2 border-dashed border-border mb-4" />
+                      <p className="text-muted-foreground leading-relaxed text-lg font-medium">
                         {faq.answer}
                       </p>
                     </div>
