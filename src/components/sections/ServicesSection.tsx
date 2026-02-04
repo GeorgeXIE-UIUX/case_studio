@@ -58,12 +58,22 @@ export const ServicesSection = () => {
       setActiveService(null); 
     } else {
       setActiveService(index); 
+      
+      setTimeout(() => {
+        const element = document.getElementById(`service-card-${index}`);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center', 
+            inline: 'nearest' 
+          });
+        }
+      }, 200); 
     }
   };
 
   return (
     <section id="services" className="relative py-24 bg-transparent overflow-hidden">
-      {/* 裝飾氣泡 - 調整顏色透明度 */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full cartoon-card animate-bounce border-none" style={{ animationDuration: '3s' }}/>
       <div className="absolute bottom-20 right-10 w-16 h-16 bg-accent/20 rounded-full cartoon-card animate-bounce border-none" style={{ animationDuration: '4s', animationDelay: '1s' }}/>
 
@@ -77,7 +87,7 @@ export const ServicesSection = () => {
           <h2 className="font-display text-4xl md:text-6xl tracking-wider">
             我們的專業<span className="text-gradient">服務與方案</span>
           </h2>
-            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
+          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
             透明化的價格，點擊項目查看詳細內容！
           </p>
         </motion.div>
@@ -90,6 +100,7 @@ export const ServicesSection = () => {
             
             return (
               <motion.div
+                id={`service-card-${index}`}
                 key={service.id}
                 layout
                 initial={{ opacity: 0, x: -50 }}
@@ -97,20 +108,21 @@ export const ServicesSection = () => {
                 viewport={{ once: false }}
                 transition={{ type: "spring", bounce: 0.3, delay: index * 0.1 }}
                 onClick={() => toggleService(index)}
-                // ✨ 修改：統一使用 cartoon-card 類別，並移除舊的 ring 樣式以避免衝突
                 className={cn(
-                  "cartoon-card cursor-pointer overflow-hidden rounded-3xl transition-all duration-300 bg-white",
-                  isActive ? `border-${service.color}/50` : "hover:bg-muted/30"
+                  "cartoon-card cursor-pointer overflow-hidden rounded-3xl transition-all duration-300 bg-white outline-none",
+                  isActive 
+                    ? `border-${service.color} ring-2 ring-${service.color}/20 shadow-lg` 
+                    : `hover:border-${service.color} hover:shadow-md`
                 )}
               >
-                {/* 標題區塊 */}
                 <motion.div layout="position" className="p-6 md:p-8 flex items-center justify-between relative overflow-hidden">
                   <service.deco className={cn("absolute -right-4 -top-4 w-24 h-24 opacity-10 rotate-12", textClass)} />
                   
                   <div className="flex items-center gap-6 z-10">
                     <div className={cn(
                       "flex h-16 w-16 items-center justify-center rounded-2xl transition-colors border-2 border-transparent",
-                      isActive ? colorClass + " text-white shadow-md" : `bg-${service.color}/30 ` + textClass
+                      // ✨ 修改：將原本的 /30 改為 /20，與其他區塊統一
+                      isActive ? colorClass + " text-white shadow-md" : `bg-${service.color}/20 ` + textClass
                     )}>
                       <service.icon className="h-8 w-8 stroke-[2.5]" />
                     </div>
@@ -133,7 +145,6 @@ export const ServicesSection = () => {
                   </motion.div>
                 </motion.div>
 
-                {/* 展開內容區塊 */}
                 <AnimatePresence>
                   {isActive && (
                     <motion.div
@@ -156,7 +167,6 @@ export const ServicesSection = () => {
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: i * 0.1 }}
-                              // ✨ 修改：子項目也加上可愛的邊框風格
                               className="border-2 border-muted flex justify-between items-center p-4 rounded-2xl bg-white/50 hover:border-primary/50 transition-colors"
                             >
                               <div className="flex items-center gap-3 text-muted-foreground font-bold">

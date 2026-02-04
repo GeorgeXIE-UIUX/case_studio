@@ -7,7 +7,6 @@ const services = [
     label: "UI/UX 設計",
     description: "App 設計、Web 設計、設計系統",
     icon: Monitor,
-    // ✨ 修改：對應 Service Section 的 Primary (粉色)
     color: "primary",
     formUrl: "https://forms.google.com/uiux", 
   },
@@ -16,7 +15,6 @@ const services = [
     label: "平面設計",
     description: "品牌視覺、社群素材、Logo 設計",
     icon: Palette,
-    // ✨ 修改：對應 Service Section 的 Secondary (藍色)
     color: "secondary",
     formUrl: "https://forms.google.com/graphic",
   },
@@ -25,7 +23,6 @@ const services = [
     label: "影片剪輯",
     description: "短影音、YouTube、商業形象片",
     icon: Film,
-    // ✨ 修改：對應 Service Section 的 Accent (黃色)
     color: "accent",
     formUrl: "https://forms.google.com/video",
   },
@@ -56,7 +53,6 @@ export const ContactSection = () => {
           viewport={{ once: false, amount: 0.3 }}
           className="max-w-4xl mx-auto mb-16"
         >
-          {/* 使用 cartoon-card 樣式 */}
           <div className="cartoon-card bg-white rounded-3xl p-8 md:p-12">
             <h3 className="font-display text-2xl font-bold text-foreground mb-8 text-center flex items-center justify-center gap-3">
               <span className="text-3xl"></span> 為什麼需要填寫表單？
@@ -93,15 +89,12 @@ export const ContactSection = () => {
               whileHover={{ y: -10, scale: 1.02 }}
               className="cartoon-card group relative bg-white rounded-3xl p-8 flex flex-col items-center text-center overflow-hidden hover:border-primary transition-all"
             >
+              {/* ✨ 修改：改用 className 處理顏色，並統一為 /20 透明度 */}
               <div
-                className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 border-2 border-black/5 shadow-sm`}
-                // ✨ 修改：將透明度從 0.1 改為 0.2，顏色更明顯
-                style={{ backgroundColor: `hsl(var(--${service.color}) / 0.2)` }}
+                className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 border-2 border-black/5 shadow-sm bg-${service.color}/20`}
               >
                 <service.icon
-                  className="w-10 h-10 transition-colors"
-                  // ✨ Icon 顏色
-                  style={{ color: `hsl(var(--${service.color}))` }}
+                  className={`w-10 h-10 transition-colors text-${service.color}`}
                 />
               </div>
 
@@ -113,7 +106,6 @@ export const ContactSection = () => {
               </p>
 
               <div
-                // ✨ 修改：Hover 時背景改為 primary (粉色)，文字改為白色
                 className="mt-auto inline-flex items-center gap-2 font-bold transition-all duration-300 group-hover:gap-3 px-6 py-3 rounded-full bg-muted group-hover:bg-primary group-hover:text-white border-2 border-transparent"
               >
                 填寫表單詢價

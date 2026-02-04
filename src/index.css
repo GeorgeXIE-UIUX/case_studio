@@ -35,6 +35,9 @@
     --accent: 45 90% 60%;
     --accent-foreground: 0 0% 20%;
 
+    --success: 142 70% 60%;
+    --success-foreground: 0 0% 100%;
+    /* 成功色:清新的薄荷綠*/
     --destructive: 0 70% 60%;
     --destructive-foreground: 0 0% 100%;
 
