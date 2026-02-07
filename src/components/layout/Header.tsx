@@ -25,59 +25,64 @@ export const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "glass py-4" : "bg-transparent py-6"
+        isScrolled 
+          ? "bg-white/60 backdrop-blur-md shadow-sm py-4" 
+          : "bg-transparent py-6"
       }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        <a href="#" className="font-display text-2xl font-bold text-foreground">
-          <span className="text-gradient">STUDIO</span>
+      <div className="container mx-auto px-6 flex items-center justify-between relative">
+        
+        {/* 左側 Logo */}
+        <a href="#" className="font-display text-2xl font-bold text-foreground z-20">
+          <span className="text-gradient"> GEORGE & MENGPIN STUDIO</span>
         </a>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* 中間導覽列 (絕對置中) */}
+        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-muted-foreground hover:text-foreground transition-colors link-underline font-medium"
+              // ✨ 修改重點：將 hover:text-foreground 改為 hover:text-primary
+              className="text-muted-foreground hover:text-primary transition-colors link-underline font-medium whitespace-nowrap"
             >
               {item.label}
             </a>
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
-          <Button variant="hero" size="lg" asChild>
+        {/* 右側 CTA 按鈕 */}
+        <div className="hidden md:block z-20">
+          <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-full px-6" size="lg" asChild>
             <a href="#contact">聯絡詢價</a>
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* 手機版選單按鈕 */}
         <button
-          className="md:hidden text-foreground"
+          className="md:hidden text-foreground z-20"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* 手機版選單 */}
       {isMobileMenuOpen && (
-        <div className="md:hidden glass mt-4 mx-6 rounded-xl p-6 animate-fade-in">
+        <div className="md:hidden bg-white/95 backdrop-blur-md border border-white/20 shadow-xl mt-4 mx-6 rounded-xl p-6 animate-fade-in">
           <nav className="flex flex-col gap-4">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="text-foreground font-medium py-2"
+                // ✨ 手機版也可以順便加上 hover:text-primary
+                className="text-foreground hover:text-primary font-medium py-2 border-b border-muted last:border-0 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.label}
               </a>
             ))}
-            <Button variant="hero" className="mt-4" asChild>
+            <Button className="w-full mt-4 bg-primary text-primary-foreground font-bold rounded-full" onClick={() => setIsMobileMenuOpen(false)} asChild>
               <a href="#contact">聯絡詢價</a>
             </Button>
           </nav>

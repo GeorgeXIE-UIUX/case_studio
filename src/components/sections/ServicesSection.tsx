@@ -1,225 +1,191 @@
 import { useState } from "react";
+import { 
+  Code, Palette, Smartphone, Check, ChevronDown, Star
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Check, Sparkles, Palette, Film } from "lucide-react";
 
-type ServiceCategory = "uiux" | "graphic" | "video";
-
-interface PricingItem {
-  name: string;
-  price: string;
-  description: string;
-}
-
-interface ServiceDetail {
-  title: string;
-  subtitle: string;
-  icon: React.ElementType;
-  color: ServiceCategory;
-  pricing: PricingItem[];
-  includes: string[];
-}
-
-const services: Record<ServiceCategory, ServiceDetail> = {
-  uiux: {
-    title: "UI/UX 介面設計",
-    subtitle: "App 設計、Web 設計、設計系統",
-    icon: Sparkles,
-    color: "uiux",
-    pricing: [
-      {
-        name: "Landing Page 專案",
-        price: "$8,000 - $15,000+",
-        description: "適合活動頁、簡單形象頁",
-      },
-      {
-        name: "完整官網設計",
-        price: "$30,000 - $60,000+",
-        description: "5-10 頁完整網站設計",
-      },
-      {
-        name: "App 原型設計",
-        price: "$3,000 / 頁起",
-        description: "按頁計費，含互動原型",
-      },
-    ],
-    includes: [
-      "使用者流程圖 (User Flow)",
-      "線框稿 (Wireframe)",
-      "Figma 原始檔案",
-      "RWD 響應式適配",
-      "2-3 次修改機會",
-    ],
-  },
-  graphic: {
-    title: "平面與社群設計",
-    subtitle: "品牌視覺、社群行銷素材",
+const services = [
+  {
+    id: "uiux",
     icon: Palette,
-    color: "graphic",
-    pricing: [
-      {
-        name: "行銷 Banner / 電商圖",
-        price: "$800 - $2,500 / 張",
-        description: "依數量階梯式折扣",
-      },
-      {
-        name: "社群包月方案",
-        price: "$15,000 / 10張",
-        description: "含視覺風格設定",
-      },
-      {
-        name: "Logo / 品牌識別",
-        price: "$12,000 - $35,000+",
-        description: "含完整設計規範",
-      },
-    ],
-    includes: [
-      "2-3 次修改機會",
-      "多種風格提案",
-      "多尺寸輸出",
-      "原始設計檔案",
-      "品牌識別規範",
-    ],
+    deco: Star,
+    color: "primary", 
+    title: "UI/UX 設計",
+    description: "以使用者為中心的設計，兼顧美學與操作體驗。",
+    items: [
+      { name: "使用者研究", price: "NT$ 15k 起" },
+      { name: "流程規劃", price: "NT$ 8k 起" },
+      { name: "線框圖繪製", price: "NT$ 12k 起" },
+      { name: "高保真原型", price: "NT$ 20k 起" },
+    ]
   },
-  video: {
-    title: "影片剪輯",
-    subtitle: "社群短影音、YouTube、商業廣告",
-    icon: Film,
-    color: "video",
-    pricing: [
-      {
-        name: "直式短影音",
-        price: "$2,000 - $5,000 / 支",
-        description: "Shorts/Reels（60秒內）",
-      },
-      {
-        name: "YouTube 長影片",
-        price: "$6,000 - $12,000 / 支",
-        description: "視毛片長度而定",
-      },
-      {
-        name: "商業形象片",
-        price: "$20,000+",
-        description: "含動態特效、高級調色",
-      },
-    ],
-    includes: [
-      "BGM 音樂選用",
-      "字幕製作",
-      "基本調色處理",
-      "轉場特效",
-      "2 次修改機會",
-    ],
+  {
+    id: "dev",
+    icon: Code,
+    deco: Star,
+    color: "secondary", 
+    title: "網站全端開發",
+    description: "採用最新 React 技術，打造高效能的現代化網站。",
+    items: [
+      { name: "一頁式網站", price: "NT$ 25k 起" },
+      { name: "企業形象官網", price: "NT$ 45k 起" },
+      { name: "CMS 後台管理", price: "NT$ 30k 起" },
+      { name: "互動特效開發", price: "NT$ 15k 起" },
+    ]
   },
-};
-
-const tabConfig: { key: ServiceCategory; label: string }[] = [
-  { key: "uiux", label: "UI/UX 設計" },
-  { key: "graphic", label: "平面設計" },
-  { key: "video", label: "影片剪輯" },
+  {
+    id: "mobile",
+    icon: Smartphone,
+    deco: Star,
+    color: "accent", 
+    title: "行動裝置適配",
+    description: "確保網站在手機、平板與桌機上都能完美呈現。",
+    items: [
+      { name: "RWD 響應式", price: "包含於開發" },
+      { name: "PWA 應用", price: "NT$ 15k 起" },
+      { name: "行動介面優化", price: "NT$ 10k 起" },
+      { name: "跨平台測試", price: "NT$ 5k 起" },
+    ]
+  },
 ];
 
 export const ServicesSection = () => {
-  const [activeTab, setActiveTab] = useState<ServiceCategory>("uiux");
-  const currentService = services[activeTab];
+  const [activeService, setActiveService] = useState<number | null>(0);
+
+  const toggleService = (index: number) => {
+    if (activeService === index) {
+      setActiveService(null); 
+    } else {
+      setActiveService(index); 
+      
+      setTimeout(() => {
+        const element = document.getElementById(`service-card-${index}`);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center', 
+            inline: 'nearest' 
+          });
+        }
+      }, 200); 
+    }
+  };
 
   return (
-    <section id="services" className="section-padding relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/20 to-transparent" />
+    <section id="services" className="relative py-24 bg-transparent overflow-hidden">
+      <div className="absolute top-20 left-10 w-20 h-20 bg-primary/20 rounded-full cartoon-card animate-bounce border-none" style={{ animationDuration: '3s' }}/>
+      <div className="absolute bottom-20 right-10 w-16 h-16 bg-accent/20 rounded-full cartoon-card animate-bounce border-none" style={{ animationDuration: '4s', animationDelay: '1s' }}/>
 
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            服務項目與<span className="text-gradient">價目表</span>
+      <div className="container px-4 md:px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.3 }}
+          className="text-center mb-16 space-y-4"
+        >
+          <h2 className="font-display text-4xl md:text-6xl tracking-wider">
+            我們的專業<span className="text-gradient">服務與方案</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            透明化的價格，讓你在諮詢前就能評估預算
+          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
+            透明化的價格，點擊項目查看詳細內容！
           </p>
-        </div>
+        </motion.div>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {tabConfig.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={cn(
-                "px-6 py-3 rounded-xl font-display font-medium transition-all duration-300",
-                activeTab === tab.key
-                  ? `bg-${tab.key} text-background shadow-lg`
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Service Content */}
-        <div className="max-w-5xl mx-auto animate-fade-in" key={activeTab}>
-          {/* Service Header */}
-          <div className="text-center mb-12">
-            <div
-              className={cn(
-                "inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4",
-                `bg-${currentService.color}/20`
-              )}
-            >
-              <currentService.icon className={cn("w-8 h-8", `text-${currentService.color}`)} />
-            </div>
-            <h3 className="font-display text-2xl md:text-3xl font-bold mb-2">
-              {currentService.title}
-            </h3>
-            <p className="text-muted-foreground">{currentService.subtitle}</p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Pricing Cards */}
-            <div className="space-y-4">
-              <h4 className="font-display text-lg font-semibold text-muted-foreground mb-4">
-                價格方案
-              </h4>
-              {currentService.pricing.map((item, index) => (
-                <div
-                  key={item.name}
-                  className="card-gradient rounded-xl p-6 border border-border/50 hover:border-primary/30 transition-colors"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h5 className="font-display font-semibold text-foreground">
-                      {item.name}
-                    </h5>
-                    <span className={cn("font-display font-bold", `text-${currentService.color}`)}>
-                      {item.price}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Includes List */}
-            <div className="card-gradient rounded-xl p-8 border border-border/50">
-              <h4 className="font-display text-lg font-semibold text-foreground mb-6">
-                服務內容包含
-              </h4>
-              <ul className="space-y-4">
-                {currentService.includes.map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <div
-                      className={cn(
-                        "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                        `bg-${currentService.color}/20`
-                      )}
-                    >
-                      <Check className={cn("w-3 h-3", `text-${currentService.color}`)} />
+        <div className="max-w-4xl mx-auto grid gap-8">
+          {services.map((service, index) => {
+            const isActive = activeService === index;
+            const colorClass = `bg-${service.color}`;
+            const textClass = `text-${service.color}`;
+            
+            return (
+              <motion.div
+                id={`service-card-${index}`}
+                key={service.id}
+                layout
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false }}
+                transition={{ type: "spring", bounce: 0.3, delay: index * 0.1 }}
+                onClick={() => toggleService(index)}
+                className={cn(
+                  "cartoon-card cursor-pointer overflow-hidden rounded-3xl transition-all duration-300 bg-white outline-none",
+                  isActive 
+                    ? `border-${service.color} ring-2 ring-${service.color}/20 shadow-lg` 
+                    : `hover:border-${service.color} hover:shadow-md`
+                )}
+              >
+                <motion.div layout="position" className="p-6 md:p-8 flex items-center justify-between relative overflow-hidden">
+                  <service.deco className={cn("absolute -right-4 -top-4 w-24 h-24 opacity-10 rotate-12", textClass)} />
+                  
+                  <div className="flex items-center gap-6 z-10">
+                    <div className={cn(
+                      "flex h-16 w-16 items-center justify-center rounded-2xl transition-colors border-2 border-transparent",
+                      // ✨ 修改：將原本的 /30 改為 /20，與其他區塊統一
+                      isActive ? colorClass + " text-white shadow-md" : `bg-${service.color}/20 ` + textClass
+                    )}>
+                      <service.icon className="h-8 w-8 stroke-[2.5]" />
                     </div>
-                    <span className="text-foreground">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+                    <div className="text-left">
+                      <h3 className={cn("text-2xl md:text-3xl font-bold", textClass)}>{service.title}</h3>
+                      {!isActive && (
+                        <p className="text-lg text-muted-foreground mt-2 md:hidden font-medium">
+                          點擊查看詳情...
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <motion.div
+                    animate={{ rotate: isActive ? 180 : 0, scale: isActive ? 1.2 : 1 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className={cn("w-10 h-10 bg-white border-2 border-muted rounded-full flex items-center justify-center shadow-sm z-10", isActive && `border-${service.color} text-${service.color}`)}
+                  >
+                    <ChevronDown className="w-6 h-6 stroke-[3]" />
+                  </motion.div>
+                </motion.div>
+
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      <div className="px-6 pb-8 pt-0 md:px-8">
+                        <div className="w-full h-0 border-t-2 border-dashed border-muted mb-6" />
+                        
+                        <p className="text-xl text-muted-foreground mb-8 leading-relaxed font-medium">
+                          {service.description}
+                        </p>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {service.items.map((item, i) => (
+                            <motion.div 
+                              key={i} 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: i * 0.1 }}
+                              className="border-2 border-muted flex justify-between items-center p-4 rounded-2xl bg-white/50 hover:border-primary/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 text-muted-foreground font-bold">
+                                <div className={cn("p-1 rounded-full", colorClass)}>
+                                  <Check className="w-4 h-4 text-white stroke-[4]" />
+                                </div>
+                                <span>{item.name}</span>
+                              </div>
+                              <span className={cn("font-extrabold text-lg", textClass)}>{item.price}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

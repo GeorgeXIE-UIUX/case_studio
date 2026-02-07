@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const faqs = [
   {
@@ -20,7 +21,7 @@ const faqs = [
   },
   {
     question: "合作流程需要多長時間？",
-    answer: "視專案規模而定。Landing Page 約 1-2 週，完整官網設計約 3-6 週，影片剪輯約 3-7 個工作天。急件可另議時程。",
+    answer: "視專案規模而定。Landing Page 約 1-2 週，完整官網設計約 3-6 週，影片剪輯約 3-7 個工作天。",
   },
   {
     question: "可以只諮詢不合作嗎？",
@@ -29,61 +30,78 @@ const faqs = [
 ];
 
 export const FAQSection = () => {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="section-padding relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/5 to-transparent" />
-
+    <section id="faq" className="section-padding bg-transparent relative">
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            className="font-display text-3xl md:text-5xl font-bold mb-4"
+          >
             <span className="text-gradient">常見問答</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          </motion.h2>
+          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
             合作前你可能想知道的事情，這裡都有解答
           </p>
         </div>
 
-        {/* FAQ Grid */}
-        <div className="max-w-3xl mx-auto">
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="card-gradient rounded-xl border border-border/50 overflow-hidden transition-all duration-300 hover:border-primary/30"
+        <div className="max-w-3xl mx-auto space-y-6">
+          {faqs.map((faq, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ delay: index * 0.1 }}
+              // ✨ 修改：使用 cartoon-card 樣式，點擊時邊框變色
+              className={`cartoon-card rounded-2xl transition-all duration-300 bg-white overflow-hidden ${
+                openFaq === index ? "border-primary" : ""
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                className="w-full px-8 py-6 flex items-center justify-between text-left"
               >
-                <button
-                  type="button"
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left"
-                >
-                  <span className="font-display font-medium text-foreground text-lg">
-                    {faq.question}
-                  </span>
-                  <div className={`p-2 rounded-full transition-all duration-300 ${openFaq === index ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                    {openFaq === index ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
-                  </div>
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    openFaq === index ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                <span className={`font-display font-bold text-xl ${openFaq === index ? "text-primary" : "text-foreground"}`}>
+                  {faq.question}
+                </span>
+                <motion.div
+                  animate={{ rotate: openFaq === index ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`p-2 rounded-full border-2 ${
+                    openFaq === index 
+                      ? 'bg-primary text-white border-primary' 
+                      : 'bg-transparent border-muted text-muted-foreground'
                   }`}
                 >
-                  <div className="px-6 pb-5">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                  <ChevronDown className="w-5 h-5 stroke-[3]" />
+                </motion.div>
+              </button>
+              
+              <AnimatePresence>
+                {openFaq === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="px-8 pb-8 pt-0">
+                      <div className="w-full h-0 border-t-2 border-dashed border-border mb-4" />
+                      <p className="text-muted-foreground leading-relaxed text-lg font-medium">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,101 +1,101 @@
-import { MessageSquare, FileCheck, Paintbrush, Send } from "lucide-react";
+import { motion } from "framer-motion";
+import { MessageSquare, FileText, PenTool, Send, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const steps = [
   {
-    number: "01",
     icon: MessageSquare,
     title: "需求諮詢",
-    description: "填寫表單或安排 15 分鐘線上會談，了解你的專案需求與目標。",
+    desc: "填寫表單或安排 15 分鐘線上會談，了解你的專案需求與目標。",
+    // ✨ 修改：統一使用主題色名稱
+    color: "primary", 
   },
   {
-    number: "02",
-    icon: FileCheck,
+    icon: FileText,
     title: "報價簽約",
-    description: "確認專案範疇與報價，支付 50% 定金後正式啟動專案。",
+    desc: "確認專案範疇與報價，支付 50% 定金後正式啟動專案。",
+    color: "secondary",
   },
   {
-    number: "03",
-    icon: Paintbrush,
+    icon: PenTool,
     title: "設計執行",
-    description: "提供初稿設計，依據回饋進行 2-3 次修正，直到滿意為止。",
+    desc: "提供初稿設計，依據回饋進行 2-3 次修正，直到滿意為止。",
+    color: "accent",
   },
   {
-    number: "04",
     icon: Send,
     title: "交付尾款",
-    description: "設計定稿後支付尾款，移交所有設計檔案與原始檔。",
+    desc: "設計定稿後支付尾款，移交所有設計檔案與原始檔。",
+    color: "success",
   },
-];
-
-const tools = [
-  { name: "Figma", category: "UI/UX" },
-  { name: "Photoshop", category: "平面" },
-  { name: "Illustrator", category: "平面" },
-  { name: "Premiere Pro", category: "影片" },
-  { name: "After Effects", category: "動態" },
-  { name: "Framer", category: "原型" },
 ];
 
 export const ProcessSection = () => {
   return (
-    <section id="process" className="section-padding relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/20 to-transparent" />
-
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
+    <section id="process" className="py-24 relative overflow-hidden bg-transparent">
+      <div className="container px-4 md:px-6 relative z-10">
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          className="text-center mb-16"
+        >
+          <h2 className="font-display text-4xl md:text-6xl tracking-wider mb-6">
             <span className="text-gradient">合作流程</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
             標準化的流程讓合作更順暢，確保每個專案都能如期高質量交付
           </p>
-        </div>
+        </motion.div>
 
-        {/* Process Steps */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => (
-            <div
-              key={step.number}
-              className="relative card-gradient rounded-2xl p-8 border border-border/50"
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ delay: index * 0.15, duration: 0.5 }}
+              className="relative group"
             >
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-border" />
+              {/* 連接線 */}
+              {index !== steps.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-1 bg-muted/50 z-0 transform -translate-y-1/2">
+                   <ArrowRight className="absolute -right-2 -top-2.5 text-muted/50 w-6 h-6" />
+                </div>
               )}
 
-              <span className="font-display text-5xl font-bold text-primary/20 mb-4 block">
-                {step.number}
-              </span>
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                <step.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-semibold text-foreground mb-3">
-                {step.title}
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {step.description}
-              </p>
-            </div>
-          ))}
-        </div>
+              <div className="cartoon-card h-full bg-white rounded-3xl p-6 flex flex-col items-center text-center relative z-10 hover:-translate-y-2 transition-transform duration-300">
+                
+                <div className={cn(
+                  "absolute -top-3 -left-3 w-12 h-12 flex items-center justify-center font-display font-bold text-xl shadow-sm z-20",
+                  "rounded-full bg-white border-2 border-border text-primary"
+                )}>
+                   0{index + 1}
+                </div>
 
-        {/* Tools Section */}
-        <div className="max-w-3xl mx-auto text-center">
-          <h3 className="font-display text-xl font-semibold text-foreground mb-6">
-            設計工具
-          </h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {tools.map((tool) => (
-              <div
-                key={tool.name}
-                className="px-4 py-2 rounded-full bg-muted/50 border border-border/50 flex items-center gap-2"
-              >
-                <span className="text-foreground font-medium">{tool.name}</span>
-                <span className="text-xs text-muted-foreground">({tool.category})</span>
+                {/* ✨ 修改：這裡的寫法現在跟其他區塊完全統一了 */}
+                <div className={cn(
+                  "w-20 h-20 rounded-2xl mb-6 flex items-center justify-center transition-transform duration-300 border-2 border-transparent",
+                  "transform -rotate-12 group-hover:rotate-[0deg] group-hover:scale-110", 
+                  // 統一使用 bg-{color}/20 和 text-{color}
+                  `bg-${step.color}/20`, 
+                  `text-${step.color}`
+                )}>
+                  <step.icon className="w-10 h-10 stroke-[2.5]" />
+                </div>
+
+                <h3 className={cn("font-display text-2xl font-bold mb-4", `text-${step.color}`)}>
+                  {step.title}
+                </h3>
+
+                <p className="text-muted-foreground font-medium leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
-            ))}
-          </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

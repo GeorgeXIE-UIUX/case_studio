@@ -1,220 +1,139 @@
+/* src/index.css */
+
+/* 引入可愛的卡通字體 */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
 @layer base {
   :root {
-    /* Dark sophisticated palette with warm accent */
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
+    /* --- 柔和可愛風配色 --- */
+    --background: 330 100% 98%;   /* 超淺粉色背景 */
+    --foreground: 330 10% 20%;    /* 深灰色文字 */
 
-    --card: 240 10% 7%;
-    --card-foreground: 0 0% 98%;
+    --card: 330 100% 99%;         /* 卡片背景 */
+    --card-foreground: 330 10% 20%;
 
-    --popover: 240 10% 7%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 330 100% 99%;
+    --popover-foreground: 330 10% 20%;
 
-    /* Warm coral/orange accent */
-    --primary: 24 95% 60%;
-    --primary-foreground: 240 10% 4%;
+    /* 主色：可愛粉紅 */
+    --primary: 330 80% 65%;       /* Hot Pink */
+    --primary-foreground: 0 0% 100%; /* 白色文字 */
 
-    --secondary: 240 5% 14%;
-    --secondary-foreground: 0 0% 98%;
+    /* 次要色：活潑粉藍 */
+    --secondary: 200 80% 70%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 5% 18%;
-    --muted-foreground: 240 5% 60%;
+    /* 柔和色：淺粉 */
+    --muted: 330 50% 95%;
+    --muted-foreground: 330 20% 40%;
 
-    --accent: 24 95% 60%;
-    --accent-foreground: 240 10% 4%;
+    /* 強調色：活潑粉黃 */
+    --accent: 45 90% 60%;
+    --accent-foreground: 0 0% 20%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --success: 142 70% 60%;
+    --success-foreground: 0 0% 100%;
+    /* 成功色:清新的薄荷綠*/
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
-    --ring: 24 95% 60%;
+    --border: 330 30% 80%;        /* 淺粉色邊框線 */
+    --input: 330 30% 80%;
+    --ring: 330 80% 65%;
 
-    --radius: 0.75rem;
+    --radius: 1.5rem;             /* 更大的圓角 */
 
-    /* Custom design tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(24 95% 60%), hsl(35 95% 55%));
-    --gradient-dark: linear-gradient(180deg, hsl(240 10% 4%), hsl(240 10% 8%));
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 8%), hsl(240 10% 6%));
-    --glow-primary: 0 0 60px hsl(24 95% 60% / 0.3);
-    --shadow-elevated: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
-
-    /* Service category colors */
-    --uiux: 210 100% 60%;
-    --graphic: 160 70% 50%;
-    --video: 280 70% 60%;
-
-    --sidebar-background: 240 10% 6%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 24 95% 60%;
-    --sidebar-primary-foreground: 240 10% 4%;
-    --sidebar-accent: 240 5% 14%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 5% 18%;
-    --sidebar-ring: 24 95% 60%;
+    /* --- 改為柔和的粉色陰影，移除黑色描邊 --- */
+    --cartoon-shadow: 4px 4px 0px 0px hsl(var(--primary) / 0.3); /* 柔和粉色陰影 */
+    --cartoon-shadow-hover: 6px 6px 0px 0px hsl(var(--primary) / 0.4);
+    --cartoon-shadow-active: 2px 2px 0px 0px hsl(var(--primary) / 0.5);
   }
 
+  /* 暫時不支援深色模式 */
   .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
+    --background: 330 100% 98%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
     scroll-behavior: smooth;
+    
+    /* 🔥【修改重點】方法一：針對 html 強制鎖定寬度與隱藏溢出 */
+    overflow-x: hidden;
+    width: 100%;
   }
-
+  
   body {
+    font-family: 'Fredoka', sans-serif;
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    
+    /* 🔥【修改重點】方法一：針對 body 再次確保鎖定，並設定相對定位 */
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+
+    /* 背景圓點 */
+    background-image: radial-gradient(hsla(330, 80%, 65%, 0.1) 2px, transparent 2px);
+    background-size: 24px 24px;
+    
+    cursor: none; /* 隱藏預設游標 */
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* --- 卡片與按鈕樣式 --- */
+  .cartoon-card, .btn {
+    border: 2px solid hsl(var(--border)); /* 改為淺粉色細邊框 */
+    box-shadow: var(--cartoon-shadow);
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .cartoon-card:hover, .btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--cartoon-shadow-hover);
+    border-color: hsl(var(--primary)); /* 懸停時邊框變主色 */
+  }
+  
+  .btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: var(--cartoon-shadow-active);
+  }
+
+  /* 文字選取顏色 */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
   }
 }
 
 @layer components {
+  .section-padding {
+    @apply py-20 md:py-28;
+  }
+  
+  /* --- 標題樣式 --- */
+  .font-display {
+    font-family: 'Fredoka', cursive;
+    font-weight: 700;
+    color: hsl(var(--foreground)); 
+  }
+
+  /* --- 文字漸層 --- */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
   }
-
+  
   .card-gradient {
-    background: var(--gradient-card);
+    @apply bg-gradient-to-br from-card to-muted/50;
   }
-
-  .glow-accent {
-    box-shadow: var(--glow-primary);
-  }
-
-  .service-card-uiux {
-    --service-color: hsl(var(--uiux));
-  }
-
-  .service-card-graphic {
-    --service-color: hsl(var(--graphic));
-  }
-
-  .service-card-video {
-    --service-color: hsl(var(--video));
-  }
-
-  .service-card {
-    @apply relative overflow-hidden rounded-2xl p-8 transition-all duration-500;
-    background: var(--gradient-card);
-  }
-
-  .service-card::before {
-    content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-500;
-    background: radial-gradient(circle at 50% 0%, var(--service-color, hsl(var(--primary))) / 0.15, transparent 70%);
-  }
-
-  .service-card:hover::before {
-    @apply opacity-100;
-  }
-
-  .service-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -20px hsl(0 0% 0% / 0.5);
-  }
-
-  /* Animated underline for links */
-  .link-underline {
-    @apply relative;
-  }
-
-  .link-underline::after {
-    content: '';
-    @apply absolute bottom-0 left-0 h-[2px] w-0 bg-primary transition-all duration-300;
-  }
-
-  .link-underline:hover::after {
-    @apply w-full;
-  }
-
-  /* Glass effect */
-  .glass {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50;
-  }
-
-  /* Section padding */
-  .section-padding {
-    @apply py-24 lg:py-32;
-  }
-}
-
-@layer utilities {
-  .animate-fade-up {
-    animation: fadeUp 0.6s ease-out forwards;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-
-  .animate-scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
-  }
-
-  .animate-slide-in-right {
-    animation: slideInRight 0.5s ease-out forwards;
-  }
-
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  /* Staggered animations */
-  .stagger-1 { animation-delay: 0.1s; }
-  .stagger-2 { animation-delay: 0.2s; }
-  .stagger-3 { animation-delay: 0.3s; }
-  .stagger-4 { animation-delay: 0.4s; }
-  .stagger-5 { animation-delay: 0.5s; }
 }
