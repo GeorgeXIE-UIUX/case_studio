@@ -1,146 +1,182 @@
 import { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 
-interface Bubble {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  direction: number;
-  color: string;
-}
+// 粒子設定
+const PARTICLE_LIFETIME = 800; // 粒子存活時間 (ms)
+const EMISSION_RATE = 40; // 發射頻率 (ms)，越小越密
+
+// 單個粒子的組件
+const Particle = ({ x, y, id }: { x: number; y: number; id: number }) => {
+  // 隨機生成噴射方向和距離
+  const randomProps = useRef({
+    x: (Math.random() - 0.5) * 60, // X 軸擴散範圍
+    y: (Math.random() - 0.5) * 60, // Y 軸擴散範圍
+    scale: 0.5 + Math.random() * 0.5, // 隨機大小
+  }).current;
+
+  return (
+    <motion.div
+      key={id}
+      className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#0071e3] rounded-full pointer-events-none z-[9998]"
+      style={{
+        x: x, 
+        y: y,
+        translateX: "-50%",
+        translateY: "-50%",
+      }}
+      initial={{ opacity: 1, scale: 0 }}
+      animate={{
+        opacity: 0,
+        scale: randomProps.scale,
+        x: x + randomProps.x,
+        y: y + randomProps.y,
+      }}
+      transition={{
+        duration: 0.8,
+        ease: "easeOut",
+      }}
+    />
+  );
+};
 
 export const CustomCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // 1. 原始數值 (用於內層圓點 & 粒子發射點，保證精準不晃動)
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+
+  // 2. 物理慣性數值 (用於外層圓圈，增加質感)
+  const springConfig = { damping: 40, stiffness: 500 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+
   const [isHovering, setIsHovering] = useState(false);
-  const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  const mousePositionRef = useRef({ x: 0, y: 0 });
+  const [isVisible, setIsVisible] = useState(false);
   
-  const colors = ["#FF69B4", "#FFD700", "#87CEEB"]; 
+  // 粒子系統狀態
+  const [particles, setParticles] = useState<{ x: number; y: number; id: number }[]>([]);
+  const mousePos = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-      mousePositionRef.current = { x: e.clientX, y: e.clientY };
+    // 強制隱藏原生游標
+    document.body.style.cursor = 'none';
+
+    const moveCursor = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      mousePos.current = { x: e.clientX, y: e.clientY };
+      if (!isVisible) setIsVisible(true);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.tagName === "A" ||
-        target.tagName === "BUTTON" ||
+      const isClickable =
+        target.tagName.toLowerCase() === "a" ||
+        target.tagName.toLowerCase() === "button" ||
+        target.tagName.toLowerCase() === "input" ||
+        target.tagName.toLowerCase() === "textarea" ||
         target.closest("a") ||
         target.closest("button") ||
-        target.classList.contains("cursor-pointer") ||
-        target.closest(".cartoon-card")
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
+        target.closest(".group");
+
+      setIsHovering(!!isClickable);
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
+    const handleMouseOut = () => {
+      setIsHovering(false);
+    };
+
+    window.addEventListener("mousemove", moveCursor);
     window.addEventListener("mouseover", handleMouseOver);
-    document.body.style.cursor = 'none';
+    window.addEventListener("mouseout", handleMouseOut);
 
     return () => {
-      window.removeEventListener("mousemove", updateMousePosition);
+      window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mouseout", handleMouseOut);
       document.body.style.cursor = 'auto';
     };
-  }, []);
+  }, [cursorX, cursorY, isVisible]);
 
+  // 粒子發射器邏輯
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isHovering) {
-      interval = setInterval(() => {
-        const { x, y } = mousePositionRef.current;
-        const id = Date.now() + Math.random();
-        const randomOffsetX = (Math.random() * 30) - 15; 
-        const randomOffsetY = (Math.random() * 30) - 15;
+    let intervalId: NodeJS.Timeout;
 
-        const newBubble: Bubble = {
-          id,
-          x: x + randomOffsetX,
-          y: y + randomOffsetY,
-          size: Math.random() * 15 + 8,
-          direction: Math.random() > 0.5 ? 1 : -1,
-          color: colors[Math.floor(Math.random() * colors.length)]
+    if (isHovering && isVisible) {
+      intervalId = setInterval(() => {
+        const newParticle = {
+          x: mousePos.current.x,
+          y: mousePos.current.y,
+          id: Date.now() + Math.random(),
         };
 
-        setBubbles((prev) => [...prev, newBubble]);
-        setTimeout(() => {
-          setBubbles((prev) => prev.filter((b) => b.id !== id));
-        }, 1000);
-      }, 80);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isHovering]);
+        setParticles((prev) => [...prev, newParticle]);
 
-  const cursorColor = "#FF69B4"; 
+        setTimeout(() => {
+          setParticles((prev) => prev.filter((p) => p.id !== newParticle.id));
+        }, PARTICLE_LIFETIME);
+
+      }, EMISSION_RATE);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [isHovering, isVisible]);
+
+
+  if (typeof navigator !== 'undefined' && typeof navigator.maxTouchPoints === 'number' && navigator.maxTouchPoints > 0) {
+    return null;
+  }
 
   return (
     <>
-      {/* 泡泡層 (不變) */}
+      <style>{`
+        body, a, button, input, textarea, .group {
+          cursor: none !important;
+        }
+      `}</style>
+
+      {/* 1. 中心實心小圓點 (無慣性，絕對精準) */}
+      <motion.div
+        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[10000]"
+        style={{
+          x: cursorX,
+          y: cursorY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={{
+          opacity: isVisible ? 1 : 0,
+          scale: isHovering ?1 : 1,
+        }}
+      />
+
+      {/* 2. 外框空心圓圈 (微慣性，增加優雅感) */}
+      <motion.div
+        className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999]"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          translateX: "-50%",
+          translateY: "-50%",
+          opacity: isVisible ? 1 : 0,
+        }}
+        animate={{
+          width: isHovering ? 48 : 32,
+          height: isHovering ? 48 : 32,
+          borderColor: isHovering ? "#0071e3" : "rgba(0, 113, 227, 0.5)", 
+          borderWidth: isHovering ? "3px" : "2px",
+          backgroundColor: isHovering ? "rgba(0, 113, 227, 0.1)" : "transparent",
+        }}
+        transition={{
+          duration: 0.2, 
+        }}
+      />
+
+      {/* 3. 連續粒子噴射 */}
       <AnimatePresence>
-        {bubbles.map((bubble) => (
-          <motion.div
-            key={bubble.id}
-            initial={{ opacity: 1, x: bubble.x - bubble.size/2, y: bubble.y - bubble.size/2, scale: 0.5 }}
-            animate={{ opacity: 0, y: bubble.y - 120, x: bubble.x + (bubble.direction * 50), scale: 1.5, rotate: bubble.direction * 90 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            style={{
-              position: "fixed",
-              width: bubble.size,
-              height: bubble.size,
-              borderRadius: "50%",
-              backgroundColor: bubble.color,
-              pointerEvents: "none",
-              zIndex: 9997,
-            }}
-          />
+        {particles.map((particle) => (
+          <Particle key={particle.id} x={particle.x} y={particle.y} id={particle.id} />
         ))}
       </AnimatePresence>
-
-      {/* 內圈：實心粉色愛心 */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
-        style={{ color: cursorColor }}
-        animate={{
-          x: mousePosition.x - 12,
-          y: mousePosition.y - 12,
-          scale: isHovering ? 0.5 : 1,
-          rotate: isHovering ? [0, -10, 10, 0] : 0,
-        }}
-        // ✨ 修改重點 1：調高 stiffness (300 -> 500) 和 damping (15 -> 25)
-        transition={{ type: "spring", stiffness: 500, damping: 25 }}
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-        </svg>
-      </motion.div>
-
-      {/* 外圈：透明白色大愛心 */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998]"
-        style={{ color: "white" }} 
-        animate={{
-          x: mousePosition.x - 28,
-          y: mousePosition.y - 28,
-          scale: isHovering ? 1.8 : 1,
-          rotate: isHovering ? -15 : 0,
-        }}
-        // ✨ 修改重點 2：調高 stiffness (150 -> 300) 和 damping (15 -> 25)
-        transition={{ type: "spring", stiffness: 300, damping: 25, mass: 0.8 }}
-      >
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="white" fillOpacity={0.4} stroke="#FF69B4" strokeWidth="1">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-        </svg>
-      </motion.div>
     </>
   );
 };

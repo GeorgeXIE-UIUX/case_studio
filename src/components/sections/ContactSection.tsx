@@ -1,119 +1,39 @@
-import { Palette, Monitor, Film, ArrowRight, FileText, Calendar, MessageSquare } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
+import { Monitor, Palette, Video, ArrowRight } from "lucide-react";
 
-const services = [
-  {
-    id: "uiux",
-    label: "UI/UX 設計",
-    description: "App 設計、Web 設計、設計系統",
-    icon: Monitor,
-    color: "primary",
-    formUrl: "https://forms.google.com/uiux", 
-  },
-  {
-    id: "graphic",
-    label: "平面設計",
-    description: "品牌視覺、社群素材、Logo 設計",
-    icon: Palette,
-    color: "secondary",
-    formUrl: "https://forms.google.com/graphic",
-  },
-  {
-    id: "video",
-    label: "影片剪輯",
-    description: "短影音、YouTube、商業形象片",
-    icon: Film,
-    color: "accent",
-    formUrl: "https://forms.google.com/video",
-  },
-];
+const contactCards = [{ id: 1, icon: Monitor, title: "UI/UX 介面設計", desc: "App 應用程式設計、全站網頁規劃、建立設計規範。", link: "#contact-uiux" }, { id: 2, icon: Palette, title: "平面品牌設計", desc: "企業識別系統 (CIS)、社群素材設計、品牌標誌。", link: "#contact-graphic" }, { id: 3, icon: Video, title: "影像剪輯製作", desc: "商業形象短影音製作、YouTube 影片後製、特效。", link: "#contact-video" }];
 
-const formRequirements = [
-  { icon: FileText, title: "專案需求說明", description: "描述你的專案目標、目標受眾、參考風格等資訊" },
-  { icon: Calendar, title: "時程與預算", description: "預計完工日期與預算區間，幫助我評估可行性" },
-  { icon: MessageSquare, title: "聯絡方式", description: "Email 或 LINE 等聯絡資訊，方便後續討論細節" },
-];
+const springTransition = { type: "spring" as const, stiffness: 50, damping: 20, mass: 1 };
+const revealVariants: Variants = { hidden: { clipPath: "inset(0 100% 0 0)" }, visible: { clipPath: "inset(0 0% 0 0)", transition: springTransition } };
+const fadeUpVariants: Variants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: springTransition } };
+const containerVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0 } } };
+const cardVariants: Variants = { hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0, transition: { ...springTransition, opacity: { duration: 1.2 } } } };
 
 export const ContactSection = () => {
   return (
-    <section id="contact" className="section-padding bg-transparent relative">
+    <section id="contact" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
-            <span className="text-gradient">聯絡詢價</span>
-          </h2>
-          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl font-medium bg-white/50 inline-block px-6 py-2 rounded-full border-2 border-dashed border-primary/30">
-            選擇你需要的服務類型，填寫專屬表單，我將在 24 小時內回覆你
-          </p>
-        </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, amount: 0.3 }}
-          className="max-w-4xl mx-auto mb-16"
-        >
-          <div className="cartoon-card bg-white rounded-3xl p-8 md:p-12">
-            <h3 className="font-display text-2xl font-bold text-foreground mb-8 text-center flex items-center justify-center gap-3">
-              <span className="text-3xl"></span> 為什麼需要填寫表單？
-            </h3>
-            <div className="grid md:grid-cols-3 gap-8">
-              {formRequirements.map((req, index) => (
-                <div key={index} className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center mb-4">
-                    <req.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <h4 className="font-display text-lg font-bold text-foreground mb-2">
-                    {req.title}
-                  </h4>
-                  <p className="text-muted-foreground font-medium leading-relaxed">
-                    {req.description}
-                  </p>
-                </div>
-              ))}
-            </div>
+        <div className="mb-16 md:mb-20">
+          <div>
+            <motion.span variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-sm font-mono text-gray-500 uppercase tracking-widest block mb-4">啟動專案</motion.span>
+            <motion.h2 variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight w-fit pr-8 py-2">
+              準備好 <span className="text-gray-600">展開合作。</span>
+            </motion.h2>
           </div>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {services.map((service, index) => (
-            <motion.a
-              key={service.id}
-              href={service.formUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -10, scale: 1.02 }}
-              className="cartoon-card group relative bg-white rounded-3xl p-8 flex flex-col items-center text-center overflow-hidden hover:border-primary transition-all"
-            >
-              {/* ✨ 修改：改用 className 處理顏色，並統一為 /20 透明度 */}
-              <div
-                className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 border-2 border-black/5 shadow-sm bg-${service.color}/20`}
-              >
-                <service.icon
-                  className={`w-10 h-10 transition-colors text-${service.color}`}
-                />
-              </div>
-
-              <h3 className="font-display text-2xl font-bold text-foreground mb-2">
-                {service.label}
-              </h3>
-              <p className="text-muted-foreground font-medium mb-8 px-2">
-                {service.description}
-              </p>
-
-              <div
-                className="mt-auto inline-flex items-center gap-2 font-bold transition-all duration-300 group-hover:gap-3 px-6 py-3 rounded-full bg-muted group-hover:bg-primary group-hover:text-white border-2 border-transparent"
-              >
-                填寫表單詢價
-                <ArrowRight className="w-4 h-4 stroke-[3]" />
-              </div>
-            </motion.a>
-          ))}
         </div>
+        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {contactCards.map((card) => (
+            <motion.div key={card.id} variants={cardVariants} className="group relative flex flex-col items-center text-center bg-white/5 border border-white/10 rounded-3xl p-6 md:py-12 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500">
+              <div className="mb-6 md:mb-8 relative">
+                <div className="absolute inset-0 bg-white/5 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="w-16 h-16 md:w-20 md:h-20 relative flex items-center justify-center rounded-full bg-white/5 border border-white/10 group-hover:scale-110 group-hover:border-white/30 transition-all duration-500"><card.icon size={28} className="text-white md:w-8 md:h-8" /></div>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4 tracking-tight">{card.title}</h3>
+              <p className="text-gray-400 mb-8 md:mb-10 leading-relaxed max-w-xs mx-auto text-sm md:text-base">{card.desc}</p>
+              <a href={card.link} className="mt-auto inline-flex items-center gap-3 px-6 py-2.5 md:px-8 md:py-3 rounded-full border border-white/30 text-white font-medium transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:border-transparent group/btn text-sm md:text-base">立即詢價 <ArrowRight size={18} className="transition-transform duration-300 group-hover/btn:translate-x-1" /></a>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

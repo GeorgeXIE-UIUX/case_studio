@@ -1,111 +1,57 @@
-import { useEffect, useRef } from "react";
-import { Zap, Target, Users } from "lucide-react";
-import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
-const AnimatedCounter = ({ value }: { value: string }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: false, margin: "-10px" });
-  const numericValue = parseInt(value.replace(/\D/g, "")) || 0;
-  const suffix = value.replace(/\d/g, "");
-  const count = useMotionValue(0);
-  const rounded = useSpring(count, { stiffness: 50, damping: 15 });
-
-  useEffect(() => {
-    if (isInView) count.set(numericValue);
-    else count.set(0);
-  }, [isInView, numericValue, count]);
-
-  useEffect(() => {
-    const unsubscribe = rounded.on("change", (latest) => {
-      if (ref.current) ref.current.textContent = Math.round(latest) + suffix;
-    });
-    return () => unsubscribe();
-  }, [rounded, suffix]);
-
-  return <span ref={ref}>0{suffix}</span>;
-};
-
-const highlights = [
-  { icon: Zap, title: "跨領域整合", description: "能同時處理 UI 介面與影片剪輯，為品牌提供一致的視覺語言。" },
-  { icon: Target, title: "結果導向", description: "不只追求美觀，更注重設計能否達成商業目標與使用者需求。" },
-  { icon: Users, title: "高效溝通", description: "標準化的合作流程，確保專案順利推進、按時交付。" },
+const team = [
+  { name: "George Xie", role: "創意總監", experience: "7年以上經驗", bio: "專注於數位產品的介面設計與使用者體驗。曾主導多個跨國品牌的視覺重塑專案。", skills: ["UI/UX", "品牌識別", "Figma"], image: "" }, 
+  { name: "MengPin Wang", role: "技術主管", experience: "5年以上經驗", bio: "熱愛鑽研新技術的全端工程師。負責系統架構規劃與效能優化。", skills: ["React", "Node.js", "WebGL"], image: "" }
 ];
 
-const stats = [
-  { value: "50+", label: "完成專案" },
-  { value: "30+", label: "合作客戶" },
-  { value: "5+", label: "年經驗" },
-];
+const springTransition = { type: "spring" as const, stiffness: 50, damping: 20, mass: 1 };
+const revealVariants: Variants = { hidden: { clipPath: "inset(0 100% 0 0)" }, visible: { clipPath: "inset(0 0% 0 0)", transition: springTransition } };
+const fadeUpVariants: Variants = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: springTransition } };
 
 export const AboutSection = () => {
   return (
-    <section id="about" className="section-padding bg-transparent relative overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-6">
-              關於<span className="text-gradient">我</span>
-            </h2>
-            {/* ✨ 修改：將文字包裹在白色卡片中 */}
-            <div className="cartoon-card bg-white p-8 rounded-3xl mb-8">
-              <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
-                擁有多年設計經驗的跨領域設計師，專注於將 UI/UX 設計、平面視覺與動態影像完美整合。
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                從使用者體驗的角度出發，打造不只美觀、更能解決問題的設計作品。
-              </p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-6">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
-                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-                  className="text-center sm:text-left p-4 rounded-2xl border-2 border-transparent hover:border-primary/20 transition-colors"
-                >
-                  <span className="font-display text-3xl md:text-4xl font-bold text-primary block mb-2 tabular-nums">
-                    <AnimatedCounter value={stat.value} />
-                  </span>
-                  <p className="text-sm text-muted-foreground font-bold">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          <div className="space-y-6">
-            {highlights.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ delay: index * 0.2, duration: 0.5 }}
-                whileHover={{ scale: 1.02, x: 10 }}
-                // ✨ 修改：使用 cartoon-card 樣式
-                className="cartoon-card bg-white rounded-2xl p-6 flex gap-5"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border-2 border-primary/20">
-                  <item.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-bold text-foreground mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed font-medium">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+    <section id="about" className="py-16 md:py-24 bg-background">
+      <div className="container px-6 mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6 md:gap-0">
+          <div className="flex-shrink-0">
+            <motion.span variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-sm font-mono text-gray-500 uppercase tracking-widest block mb-4">關於我們</motion.span>
+            <motion.h2 variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight py-2 md:whitespace-nowrap">
+              精實團隊 <span className="text-gray-600">卓越影響。</span>
+            </motion.h2>
           </div>
+        </div>
+        
+        <div className="flex flex-col lg:flex-row gap-12 items-start relative">
+          {team.map((member, index) => (
+            <motion.div key={member.name} initial={{ opacity: 0, x: index === 0 ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false }} transition={{ delay: index * 0.2, ...springTransition }} className="flex-1 flex flex-col md:flex-row gap-8 items-start group w-full">
+               
+               {/* 圖片區域：圓角正方形 + 手機版滿寬 */}
+               <div className="relative w-full md:max-w-none md:w-48 aspect-square flex-shrink-0 overflow-hidden rounded-2xl bg-white/5 mx-auto md:mx-0">
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none" />
+                </div>
+
+                <div className="flex-1 space-y-3 w-full">
+                  <div className="border-b border-white/10 pb-3 mb-3">
+                    <h3 className="text-2xl font-bold text-white">{member.name}</h3>
+                    <div className="flex flex-wrap justify-between items-center mt-1 gap-2">
+                      <p className="text-[#0071e3] text-sm font-medium tracking-wide uppercase">{member.role}</p>
+                      <span className="text-xs font-mono text-gray-500">{member.experience}</span>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed">{member.bio}</p>
+                  <div className="pt-2 flex flex-wrap gap-2">{member.skills.map((skill) => (<span key={skill} className="text-[10px] uppercase tracking-wider font-medium text-gray-500 border border-white/10 px-2 py-1 rounded bg-white/5">{skill}</span>))}</div>
+                </div>
+
+                {/* 修改處：移除 min-h-[300px]，只保留 self-stretch 與 w-[1px] */}
+                {/* 這樣線條高度就會自動跟隨該卡片內容的高度 */}
+                {index === 0 && <div className="hidden lg:block w-[1px] bg-white/10 self-stretch mx-4" />}
+                
+                {/* 手機版橫線 */}
+                {index === 0 && <div className="block lg:hidden w-full h-[1px] bg-white/10 my-4" />}
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

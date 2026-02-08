@@ -1,10 +1,12 @@
 export const Footer = () => {
   return (
-    <footer className="py-6 border-t border-border/50">
-      <div className="container mx-auto px-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Studio Design. All rights reserved.
-        </p>
+    <footer className="bg-background py-12">
+      <div className="container px-6 mx-auto">
+        <div className="flex justify-center items-center text-xs text-gray-600">
+          <p>
+            Copyright © {new Date().getFullYear()} Studio. 版權所有。
+          </p>
+        </div>
       </div>
     </footer>
   );

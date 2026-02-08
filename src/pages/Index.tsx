@@ -1,16 +1,17 @@
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { ServicesSection } from "@/components/sections/ServicesSection";
-import { PortfolioSection } from "@/components/sections/PortfolioSection";
-import { ProcessSection } from "@/components/sections/ProcessSection";
 import { AboutSection } from "@/components/sections/AboutSection";
-import { FAQSection } from "@/components/sections/FAQSection";
+import { ServicesSection } from "@/components/sections/ServicesSection";
+import { ProcessSection } from "@/components/sections/ProcessSection";
+import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+// 1. 引入元件
+import { ScrollToTop } from "@/components/ui/ScrollToTop"; 
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-background text-foreground selection:bg-white/20">
       <Header />
       <main>
         <HeroSection />
@@ -18,10 +19,12 @@ const Index = () => {
         <PortfolioSection />
         <ProcessSection />
         <AboutSection />
-        <FAQSection />
         <ContactSection />
       </main>
       <Footer />
+      
+      {/* 2. 放置在最外層 */}
+      <ScrollToTop />
     </div>
   );
 };

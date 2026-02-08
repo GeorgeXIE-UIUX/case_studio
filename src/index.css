@@ -1,7 +1,4 @@
-/* src/index.css */
-
-/* 引入可愛的卡通字體 */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,131 +6,99 @@
 
 @layer base {
   :root {
-    /* --- 柔和可愛風配色 --- */
-    --background: 330 100% 98%;   /* 超淺粉色背景 */
-    --foreground: 330 10% 20%;    /* 深灰色文字 */
+    /* --- Studio Aesthetics (高端黑白極簡) --- */
+    
+    /* 背景：接近純黑的深灰，比純黑更有層次 */
+    --background: 0 0% 5%;       /* #0d0d0d */
+    --foreground: 0 0% 98%;      /* #fafafa */
 
-    --card: 330 100% 99%;         /* 卡片背景 */
-    --card-foreground: 330 10% 20%;
+    /* 卡片：稍微亮一點的黑 */
+    --card: 0 0% 8%;             /* #141414 */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 330 100% 99%;
-    --popover-foreground: 330 10% 20%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    /* 主色：可愛粉紅 */
-    --primary: 330 80% 65%;       /* Hot Pink */
-    --primary-foreground: 0 0% 100%; /* 白色文字 */
+    /* Primary：純白 (用於按鈕、強調文字) */
+    --primary: 0 0% 100%; 
+    --primary-foreground: 0 0% 0%;
 
-    /* 次要色：活潑粉藍 */
-    --secondary: 200 80% 70%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary：稍微暗一點的白，或灰色 */
+    --secondary: 0 0% 15%; 
+    --secondary-foreground: 0 0% 98%;
 
-    /* 柔和色：淺粉 */
-    --muted: 330 50% 95%;
-    --muted-foreground: 330 20% 40%;
+    /* Muted：深灰色 */
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%; 
 
-    /* 強調色：活潑粉黃 */
-    --accent: 45 90% 60%;
-    --accent-foreground: 0 0% 20%;
+    /* Accent：深灰強調 */
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 100%;
 
-    --success: 142 70% 60%;
-    --success-foreground: 0 0% 100%;
-    /* 成功色:清新的薄荷綠*/
-    --destructive: 0 70% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 330 30% 80%;        /* 淺粉色邊框線 */
-    --input: 330 30% 80%;
-    --ring: 330 80% 65%;
+    --border: 0 0% 15%;          /* 非常低調的邊框 */
+    --input: 0 0% 15%;
+    --ring: 0 0% 80%; 
 
-    --radius: 1.5rem;             /* 更大的圓角 */
-
-    /* --- 改為柔和的粉色陰影，移除黑色描邊 --- */
-    --cartoon-shadow: 4px 4px 0px 0px hsl(var(--primary) / 0.3); /* 柔和粉色陰影 */
-    --cartoon-shadow-hover: 6px 6px 0px 0px hsl(var(--primary) / 0.4);
-    --cartoon-shadow-active: 2px 2px 0px 0px hsl(var(--primary) / 0.5);
-  }
-
-  /* 暫時不支援深色模式 */
-  .dark {
-    --background: 330 100% 98%;
+    --radius: 0.75rem;
   }
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    
-    /* 🔥【修改重點】方法一：針對 html 強制鎖定寬度與隱藏溢出 */
-    overflow-x: hidden;
-    width: 100%;
+    @apply antialiased; 
   }
   
   body {
-    font-family: 'Fredoka', sans-serif;
-    @apply bg-background text-foreground antialiased;
-    
-    /* 🔥【修改重點】方法一：針對 body 再次確保鎖定，並設定相對定位 */
+    @apply bg-background text-foreground font-sans antialiased;
+    /* 加入一點點雜訊質感，增加「設計感」 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
     overflow-x: hidden;
-    width: 100%;
-    position: relative;
-
-    /* 背景圓點 */
-    background-image: radial-gradient(hsla(330, 80%, 65%, 0.1) 2px, transparent 2px);
-    background-size: 24px 24px;
-    
-    cursor: none; /* 隱藏預設游標 */
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  /* --- 卡片與按鈕樣式 --- */
-  .cartoon-card, .btn {
-    border: 2px solid hsl(var(--border)); /* 改為淺粉色細邊框 */
-    box-shadow: var(--cartoon-shadow);
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  .cartoon-card:hover, .btn:hover:not(:disabled) {
-    transform: translate(-2px, -2px);
-    box-shadow: var(--cartoon-shadow-hover);
-    border-color: hsl(var(--primary)); /* 懸停時邊框變主色 */
+    @apply tracking-tight font-semibold; 
   }
   
-  .btn:active:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: var(--cartoon-shadow-active);
-  }
-
-  /* 文字選取顏色 */
+  /* 選取文字時的顏色：反白 */
   ::selection {
-    background-color: hsl(var(--primary) / 0.3);
-    color: hsl(var(--primary));
+    background-color: #fff; 
+    color: #000;
   }
 }
 
 @layer components {
-  .section-padding {
-    @apply py-20 md:py-28;
+  /* 設計感按鈕：極簡線條 */
+  .btn-studio {
+    @apply rounded-lg px-6 py-3 text-sm font-medium transition-all duration-300 border border-white/20 hover:bg-white hover:text-black hover:border-transparent;
   }
   
-  /* --- 標題樣式 --- */
-  .font-display {
-    font-family: 'Fredoka', cursive;
-    font-weight: 700;
-    color: hsl(var(--foreground)); 
-  }
-
-  /* --- 文字漸層 --- */
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+  /* 互動式卡片：懸停時輕微上浮 */
+  .studio-card {
+    @apply bg-card rounded-xl overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-white/5 border border-white/5;
   }
   
-  .card-gradient {
-    @apply bg-gradient-to-br from-card to-muted/50;
+  /* 文字底線動畫 (Hover Effect) */
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+  }
+  
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.3s ease-out;
+  }
+  
+  .link-underline:hover::after {
+    width: 100%;
   }
 }
