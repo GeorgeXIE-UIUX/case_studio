@@ -30,12 +30,23 @@ export const HeroSection = () => {
             我們結合美學設計與尖端技術，為您的品牌打造獨一無二的數位足跡。從網站開發到品牌識別，提供全方位的解決方案。
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-6 sm:px-0">
-            <Button size="lg" className="bg-white text-black hover:bg-gray-200 group text-base w-full sm:w-auto h-12 sm:h-14 rounded-full">
-              開始專案
-              <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <Button
+              size="lg"
+              className="bg-white text-black hover:bg-gray-200 group text-base w-full sm:w-auto h-12 sm:h-14 rounded-full"
+              asChild
+            >
+              <a href="#contact">
+                開始專案
+                <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </a>
             </Button>
-            <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10 text-base w-full sm:w-auto h-12 sm:h-14 rounded-full">
-              了解更多
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10 text-base w-full sm:w-auto h-12 sm:h-14 rounded-full"
+              asChild
+            >
+              <a href="#services">了解更多</a>
             </Button>
           </div>
         </motion.div>

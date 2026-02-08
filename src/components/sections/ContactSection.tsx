@@ -1,7 +1,7 @@
 import { motion, Variants } from "framer-motion";
-import { Monitor, Palette, Video, ArrowRight } from "lucide-react";
+import { Monitor, Palette, Video, ArrowRight, Code } from "lucide-react";
 
-const contactCards = [{ id: 1, icon: Monitor, title: "UI/UX 介面設計", desc: "App 應用程式設計、全站網頁規劃、建立設計規範。", link: "#contact-uiux" }, { id: 2, icon: Palette, title: "平面品牌設計", desc: "企業識別系統 (CIS)、社群素材設計、品牌標誌。", link: "#contact-graphic" }, { id: 3, icon: Video, title: "影像剪輯製作", desc: "商業形象短影音製作、YouTube 影片後製、特效。", link: "#contact-video" }];
+const contactCards = [{ id: 1, icon: Monitor, title: "UI/UX 介面設計", desc: "App 應用程式設計、全站網頁規劃、建立設計規範。", link: "#contact-uiux" }, { id: 2, icon: Code, title: "網站開發", desc: "品牌官網、形象網站、前後台系統開發與維護。", link: "#contact-web" }, { id: 3, icon: Palette, title: "平面品牌設計", desc: "企業識別系統 (CIS)、社群素材設計、品牌標誌。", link: "#contact-graphic" }, { id: 4, icon: Video, title: "影像剪輯製作", desc: "商業形象短影音製作、YouTube 影片後製、特效。", link: "#contact-video" }];
 
 const springTransition = { type: "spring" as const, stiffness: 50, damping: 20, mass: 1 };
 const revealVariants: Variants = { hidden: { clipPath: "inset(0 100% 0 0)" }, visible: { clipPath: "inset(0 0% 0 0)", transition: springTransition } };
@@ -21,7 +21,7 @@ export const ContactSection = () => {
             </motion.h2>
           </div>
         </div>
-        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: false, amount: 0.1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {contactCards.map((card) => (
             <motion.div key={card.id} variants={cardVariants} className="group relative flex flex-col items-center text-center bg-white/5 border border-white/10 rounded-3xl p-6 md:py-12 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500">
               <div className="mb-6 md:mb-8 relative">

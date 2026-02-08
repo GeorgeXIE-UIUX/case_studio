@@ -1,8 +1,8 @@
 import { motion, Variants } from "framer-motion";
 
 const team = [
-  { name: "George Xie", role: "創意總監", experience: "7年以上經驗", bio: "專注於數位產品的介面設計與使用者體驗。曾主導多個跨國品牌的視覺重塑專案。", skills: ["UI/UX", "品牌識別", "Figma"], image: "" }, 
-  { name: "MengPin Wang", role: "技術主管", experience: "5年以上經驗", bio: "熱愛鑽研新技術的全端工程師。負責系統架構規劃與效能優化。", skills: ["React", "Node.js", "WebGL"], image: "" }
+  { name: "George Xie", role: "產品設計師 (UI/UX)", experience: "7年以上經驗", bio: "專注於數位產品的介面設計與使用者體驗。曾主導多個跨國品牌的視覺重塑專案。", skills: ["UI/UX", "品牌識別", "Figma"], image: "" }, 
+  { name: "MengPin Wang", role: "全端工程師", experience: "5年以上經驗", bio: "熱愛鑽研新技術的全端工程師。負責系統架構規劃與效能優化。", skills: ["React", "Node.js", "WebGL"], image: "" }
 ];
 
 const springTransition = { type: "spring" as const, stiffness: 50, damping: 20, mass: 1 };
