@@ -76,7 +76,7 @@ export const ServicesSection = () => {
                       <div className="container px-4 pl-4 md:pl-20 py-6 md:py-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 bg-white/5 rounded-2xl p-6 md:p-8 border border-white/10">
                           {service.items.map((item, idx) => (
-                            <div key={idx} className="flex justify-between items-center border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                            <div key={idx} className="flex justify-between items-center border-b border-white/10 pb-4">
                               <span className="text-white text-sm md:text-base">{item.name}</span>
                               <span className="text-[#0071e3] font-mono text-sm whitespace-nowrap ml-4">{item.price}</span>
                             </div>
