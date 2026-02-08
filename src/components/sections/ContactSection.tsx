@@ -11,7 +11,7 @@ const cardVariants: Variants = { hidden: { opacity: 0, y: 50 }, visible: { opaci
 
 export const ContactSection = () => {
   return (
-    <section id="contact" className="py-16 md:py-24 bg-background">
+    <section id="contact" className="py-16 md:py-24 bg-background min-h-[100dvh] snap-start snap-always scroll-mt-0">
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-16 md:mb-20">
           <div>

@@ -49,7 +49,7 @@ export const PortfolioSection = () => {
   };
 
   return (
-    <section id="portfolio" className="py-16 md:py-24 bg-background overflow-hidden">
+    <section id="portfolio" className="py-16 md:py-24 bg-background overflow-hidden min-h-[100dvh] snap-start snap-always scroll-mt-0">
       <div className="container mx-auto px-6 relative z-10">
         {/* 修改處 1：items-end 改為 items-start md:items-end，修正手機版標題靠右的問題 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6 md:gap-0">

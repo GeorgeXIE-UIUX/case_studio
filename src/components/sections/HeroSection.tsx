@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
+    <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden snap-start snap-always scroll-mt-0">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-background z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[490px] md:h-[490px] bg-blue-500/20 rounded-full blur-[60px] md:blur-[80px] opacity-30 animate-pulse" />

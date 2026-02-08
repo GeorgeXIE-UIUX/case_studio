@@ -11,7 +11,7 @@ const fadeUpVariants: Variants = { hidden: { opacity: 0, y: 30 }, visible: { opa
 
 export const AboutSection = () => {
   return (
-    <section id="about" className="py-16 md:py-24 bg-background">
+    <section id="about" className="py-16 md:py-24 bg-background min-h-[100dvh] snap-start snap-always scroll-mt-0">
       <div className="container px-6 mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6 md:gap-0">
           <div className="flex-shrink-0">

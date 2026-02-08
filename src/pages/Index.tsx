@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 // 1. 引入元件
 import { ScrollToTop } from "@/components/ui/ScrollToTop"; 
+import { SectionSnapScroll } from "@/components/ui/SectionSnapScroll";
 
 const Index = () => {
   return (
@@ -25,6 +26,7 @@ const Index = () => {
       
       {/* 2. 放置在最外層 */}
       <ScrollToTop />
+      <SectionSnapScroll />
     </div>
   );
 };

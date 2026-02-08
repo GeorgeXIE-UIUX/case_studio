@@ -22,7 +22,7 @@ const dotVariants: Variants = { hidden: { scale: 0, opacity: 0 }, visible: { sca
 
 export const ProcessSection = () => {
   return (
-    <section id="process" className="py-16 md:py-24 bg-background relative overflow-hidden">
+    <section id="process" className="py-16 md:py-24 bg-background relative overflow-hidden min-h-[100dvh] snap-start snap-always scroll-mt-0">
       <div className="container px-6 mx-auto relative z-10">
         {/* 修改處：items-end 改為 items-start md:items-end，確保手機版標題置左 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16">

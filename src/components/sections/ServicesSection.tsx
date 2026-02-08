@@ -21,20 +21,10 @@ export const ServicesSection = () => {
   const toggleService = (id: string, index: number) => {
     const isOpening = activeId !== id;
     setActiveId(isOpening ? id : null);
-
-    if (isOpening) {
-      setTimeout(() => {
-        itemRefs.current[index]?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest"
-        });
-      }, 200);
-    }
   };
 
   return (
-    <section id="services" className="py-16 md:py-24 bg-background">
+    <section id="services" className="py-16 md:py-24 bg-background min-h-[100dvh] snap-start snap-always scroll-mt-0">
       <div className="container px-6 mx-auto">
         <div className="mb-12 md:mb-16">
           <div>
