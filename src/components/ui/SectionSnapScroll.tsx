@@ -4,24 +4,89 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export const SectionSnapScroll = () => {
   const [activeSection, setActiveSection] = useState(0);
-  const [sectionCount, setSectionCount] = useState(0); 
+  const [sectionCount, setSectionCount] = useState(0);
   const isScrolling = useRef(false);
   const isMobile = useIsMobile();
 
+  // 取得所有可滾動的元素 (Sections + Footer)
   const getScrollTargets = () => {
     const sections = Array.from(document.querySelectorAll("main > section"));
     const footer = document.querySelector("footer");
     return footer ? [...sections, footer] : sections;
   };
 
+  // 核心修正 1：監聽 DOM 變化，確保 Lazy Loading 的區塊載入後能更新數量
   useEffect(() => {
-    // 計算主要 Section 數量 (不含 Footer) 以控制圓點顯示
-    const sections = document.querySelectorAll("main > section");
-    setSectionCount(sections.length);
+    const updateSectionCount = () => {
+      const sections = document.querySelectorAll("main > section");
+      setSectionCount(sections.length);
+      
+      // 同步目前的所在位置 (避免重整頁面後圓點錯亂)
+      syncActiveSection();
+    };
+
+    // 初始執行一次
+    updateSectionCount();
+
+    // 使用 MutationObserver 監聽 <main> 內部的變化
+    const observer = new MutationObserver(updateSectionCount);
+    const mainElement = document.querySelector("main");
+    
+    if (mainElement) {
+      observer.observe(mainElement, { childList: true, subtree: true });
+    }
+
+    // 也要監聽視窗大小改變 (RWD 可能影響高度)
+    window.addEventListener("resize", updateSectionCount);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateSectionCount);
+    };
   }, []);
 
+  // 輔助函式：根據目前捲動位置，計算應該亮哪一顆燈
+  const syncActiveSection = () => {
+    const targets = getScrollTargets();
+    if (!targets.length) return;
+
+    const currentScroll = window.scrollY;
+    
+    // 判斷是否到底 (Footer)
+    const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+    
+    if (isAtBottom) {
+      setActiveSection(targets.length - 1);
+      return;
+    }
+
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    targets.forEach((el, index) => {
+      // @ts-ignore
+      const top = el.offsetTop;
+      const distance = Math.abs(currentScroll - top);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    setActiveSection(closestIndex);
+  };
+
+  // 滾動監聽邏輯 (維持原本的「滾一次切一頁」)
   useEffect(() => {
     if (isMobile) return;
+
+    // 額外加入 scroll 監聽，確保使用拉動捲軸時圓點也會更新
+    const handleNativeScroll = () => {
+      if (!isScrolling.current) {
+        syncActiveSection();
+      }
+    };
+    window.addEventListener("scroll", handleNativeScroll);
 
     const handleWheel = (e: WheelEvent) => {
       if (isScrolling.current) {
@@ -37,17 +102,19 @@ export const SectionSnapScroll = () => {
       const direction = e.deltaY > 0 ? 1 : -1;
       const currentScroll = window.scrollY;
       
-      // 關鍵修正：判斷是否已經到底部
-      // 如果 (視窗高度 + 捲動高度) >= 網頁總高度 (容許 10px 誤差)，視為在 Footer
+      // 到底部判斷
       const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 10;
 
       let closestIndex = 0;
 
-      if (isAtBottom) {
-        // 如果在底部，強制設定為最後一個區塊 (Footer)
-        closestIndex = targets.length - 1;
+      if (isAtBottom && direction > 0) {
+         // 已經在底部且繼續往下滑，不做動作
+         return; 
+      } else if (isAtBottom && direction < 0) {
+         // 在底部往上滑，起始點設為 Footer
+         closestIndex = targets.length - 1;
       } else {
-        // 否則正常計算距離
+        // 正常計算最近的區塊
         let minDistance = Infinity;
         targets.forEach((el, index) => {
           // @ts-ignore
@@ -91,13 +158,17 @@ export const SectionSnapScroll = () => {
     };
 
     window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("scroll", handleNativeScroll);
+    };
   }, [isMobile]);
 
   if (isMobile) return null;
 
-  // 當在 Footer (activeSection >= sectionCount) 時不顯示圓點
-  if (activeSection >= sectionCount) return null;
+  // 只有當 sectionCount 大於 0 (已載入) 且 目前不在 Footer (activeSection < sectionCount) 時才顯示
+  if (sectionCount === 0 || activeSection >= sectionCount) return null;
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-row gap-4 hidden lg:flex">

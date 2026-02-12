@@ -19,13 +19,20 @@ const fadeUpVariants: Variants = { hidden: { opacity: 0, y: 20 }, visible: { opa
 const desktopSectionVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { when: "beforeChildren", staggerChildren: 0.1 } } };
 const desktopGridVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: STAGGER_DELAY, delayChildren: 0 } } };
 
-// Mobile 動畫 (簡化版：全部一起淡入)
+// Mobile 動畫 (簡化版：Grid 自己負責淡入)
 const mobileGridVariants: Variants = { 
   hidden: { opacity: 0, y: 20 }, 
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } 
 };
 
-// 線條動畫 (僅電腦版水平線使用)
+// 新增：Mobile 容器動畫 (強制顯示)
+// 這是修復問題的關鍵：明確告訴手機版容器要 opacity: 1
+const mobileContainerVariants: Variants = {
+  hidden: { opacity: 1 }, 
+  visible: { opacity: 1 }
+};
+
+// 線條動畫
 const lineVariants: Variants = { hidden: { scaleX: 0, opacity: 0 }, visible: { scaleX: 1, opacity: 1, transition: { delay: 0.1, duration: LINE_DURATION, ease: "linear" } } };
 
 // 項目動畫
@@ -44,6 +51,7 @@ export const ProcessSection = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-16">
           <div>
+            <motion.span variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-sm font-mono text-gray-500 uppercase tracking-widest block mb-4">執行流程</motion.span>
             <motion.h2 
               variants={revealVariants} 
               initial="hidden" 
@@ -58,26 +66,17 @@ export const ProcessSection = () => {
 
         <motion.div 
           className="relative" 
-          variants={isMobile ? undefined : desktopSectionVariants} // 手機版移除外層 stagger
+          // 修改處：手機版使用 mobileContainerVariants (強制不透明)，而不是 undefined
+          variants={isMobile ? mobileContainerVariants : desktopSectionVariants} 
           initial="hidden" 
           whileInView="visible" 
           viewport={{ once: false, amount: 0.2 }}
         >
-          {/* =======================
-              線條 (Line) 
-             ======================= */}
-          
-          {/* 1. 電腦版水平線 (保持原樣) */}
+          {/* 線條 */}
           <motion.div variants={lineVariants} className="absolute top-3 left-0 w-full h-[2px] bg-[#0071e3] origin-left hidden md:block z-0 shadow-[0_0_10px_rgba(0,113,227,0.8)]" />
-
-          {/* 2. 手機版垂直線 (新增：模擬 PC 風格的藍線) */}
-          {/* 定位在左側圓點的中心線上 (left-[11px] 對應圓點寬度中心) */}
           <div className="absolute top-2 left-[11px] w-[2px] h-[calc(100%-20px)] bg-[#0071e3]/50 md:hidden z-0" />
 
-
-          {/* =======================
-              內容網格 (Grid)
-             ======================= */}
+          {/* 內容網格 */}
           <motion.div 
              variants={isMobile ? mobileGridVariants : desktopGridVariants}
              className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-8"
@@ -88,10 +87,6 @@ export const ProcessSection = () => {
                 variants={stepItemVariants} 
                 className="relative group flex flex-col md:block pl-10 md:pl-0"
               >
-                {/* 圓點 (Dot) 
-                   手機版：absolute left-0 (垂直置中對齊線條)
-                   電腦版：static / absolute (水平對齊線條)
-                */}
                 <motion.div 
                   variants={dotVariants} 
                   className="absolute left-0 top-1 md:static md:left-auto md:top-auto flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full border border-white bg-background z-10 md:mb-8"
@@ -99,27 +94,18 @@ export const ProcessSection = () => {
                     <div className="w-1.5 h-1.5 rounded-full bg-[#0071e3]" />
                 </motion.div>
                 
-                {/* 內容區塊 */}
                 <div className="md:border-l md:border-white/10 md:pl-4 transition-all duration-300">
-                  
-                  {/* ID & Title */}
                   <div className="flex items-baseline gap-2 mb-1 md:block md:mb-2">
-                    {/* ID: 手機版藍色/小字，電腦版白色/大字/絕對定位 */}
                     <span className="text-lg font-mono text-white font-bold md:text-[#ffffff] md:text-xl md:absolute md:-top-12 md:left-2 md:block">
                       /{step.id}
                     </span>
-                    {/* Title: 手機版 text-lg，電腦版 text-2xl */}
                     <h3 className="text-lg md:text-2xl font-bold text-white group-hover:text-[#0071e3] transition-colors duration-300">
                       {step.title}
                     </h3>
                   </div>
-
-                  {/* Subtitle */}
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wider block mb-2 md:mb-3">
                     {step.subtitle}
                   </span>
-                  
-                  {/* Description */}
                   <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
                     {step.desc}
                   </p>

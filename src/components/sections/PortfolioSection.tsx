@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { ExternalLink, Play } from "lucide-react";
-import { motion, AnimatePresence, PanInfo, Variants } from "framer-motion";
+// 1. 改用 m 元件
+import { m, AnimatePresence, PanInfo, Variants } from "framer-motion";
 
 const portfolioItems = [
   { id: 1, title: "Lumina 應用程式", client: "金融科技領域", category: "uiux", image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=600&fit=crop" },
@@ -50,25 +51,16 @@ export const PortfolioSection = () => {
 
   return (
     <section id="portfolio" className="bg-background overflow-hidden relative">
-      {/* 修改重點：
-          1. py-16 -> py-10 (手機縮小間距)
-          2. md:py-0 -> md:py-16 (平板不強制歸零，維持舒適間距)
-          3. md:h-screen -> lg:h-screen (平板不強制全螢幕，只有電腦版才全螢幕)
-          4. lg:py-0 (電腦版因為是 flex center，所以 padding 歸零)
-      */}
       <div className="w-full py-10 md:py-16 lg:py-0 lg:h-screen flex flex-col justify-center">
         
-        {/* 修改重點：
-            gap-12 -> gap-8 (手機版標題跟卡片近一點)
-            md:gap-16 -> md:gap-12 (平板/電腦版也稍微緊湊一點)
-        */}
         <div className="container mx-auto px-6 flex flex-col gap-8 md:gap-12 justify-center">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-0 shrink-0">
             <div>
-              <motion.h2 variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight py-2 md:whitespace-nowrap">
+              {/* 2. motion 改為 m */}
+              <m.h2 variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight py-2 md:whitespace-nowrap">
                 精選 <span className="text-gray-600">作品集。</span>
-              </motion.h2>
+              </m.h2>
             </div>
             
             <div className="flex flex-wrap gap-2 justify-start md:justify-end">
@@ -76,14 +68,14 @@ export const PortfolioSection = () => {
             </div>
           </div>
           
-          <motion.div variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} transition={{ ...springTransition, delay: 0.3 }} className="relative h-[220px] md:h-[400px] flex items-start justify-center w-full max-w-5xl mx-auto perspective-1000 shrink-0">
+          <m.div variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} transition={{ ...springTransition, delay: 0.3 }} className="relative h-[220px] md:h-[400px] flex items-start justify-center w-full max-w-5xl mx-auto perspective-1000 shrink-0">
             <div className="relative w-full h-full flex items-start justify-center">
               <AnimatePresence initial={false}>
                 {filteredItems.map((item, index) => {
                     const style: any = getCardStyle(index);
                     if (style.display === "none") return null;
                     return (
-                      <motion.div
+                      <m.div
                         key={item.id}
                         onClick={() => setActiveIndex(index)}
                         drag="x"
@@ -97,7 +89,14 @@ export const PortfolioSection = () => {
                         style={{ cursor: style.zIndex === 10 ? "default" : "pointer", zIndex: style.zIndex }}
                       >
                         <div className="w-full h-full relative overflow-hidden rounded-2xl bg-gray-900 border border-white/10 group select-none">
-                            <img src={item.image} alt={item.title} className="w-full h-full object-cover pointer-events-none" />
+                            {/* 3. 優化圖片載入屬性 */}
+                            <img 
+                              src={item.image} 
+                              alt={item.title} 
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover pointer-events-none" 
+                            />
                             <div className={cn("absolute inset-0 transition-colors duration-500", style.zIndex === 10 ? "bg-black/0" : "bg-black/50")} />
                             
                             <div className={cn("absolute bottom-0 left-0 w-full p-6 md:p-8 bg-gradient-to-t from-black/90 to-transparent text-white transition-opacity duration-300", style.zIndex === 10 ? "opacity-100" : "opacity-0")}>
@@ -113,12 +112,12 @@ export const PortfolioSection = () => {
                               </div>
                             </div>
                         </div>
-                      </motion.div>
+                      </m.div>
                     );
                   })}
               </AnimatePresence>
             </div>
-          </motion.div>
+          </m.div>
           
         </div>
       </div>

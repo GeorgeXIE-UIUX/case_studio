@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+// 1. 改從 framer-motion 引入 m
+import { m } from "framer-motion";
 
 export const HeroSection = () => {
   return (
@@ -11,7 +12,8 @@ export const HeroSection = () => {
       </div>
 
       <div className="container px-4 md:px-6 relative z-10 text-center">
-        <motion.div
+        {/* 2. 將 motion.div 改為 m.div */}
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -41,15 +43,15 @@ export const HeroSection = () => {
               </a>
             </Button>
             <Button
-              size="lg"
               variant="outline"
+              size="lg"
               className="border-white/20 text-white hover:bg-white/10 text-base w-full sm:w-auto h-12 sm:h-14 rounded-full"
               asChild
             >
-              <a href="#services">了解更多</a>
+              <a href="#portfolio">瀏覽作品</a>
             </Button>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );
