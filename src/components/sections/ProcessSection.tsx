@@ -1,4 +1,5 @@
 import { motion, Variants } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const steps = [
   { id: "01", title: "需求探索", subtitle: "研究與深度訪談", desc: "深入了解您的品牌願景與核心價值，釐清市場定位。" },
@@ -14,48 +15,114 @@ const springTransition = { type: "spring" as const, stiffness: 50, damping: 20, 
 const revealVariants: Variants = { hidden: { clipPath: "inset(0 100% 0 0)" }, visible: { clipPath: "inset(0 0% 0 0)", transition: springTransition } };
 const fadeUpVariants: Variants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: springTransition } };
 
-const sectionVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { when: "beforeChildren", staggerChildren: 0.1 } } };
+// Desktop 動畫 (保持原樣：交錯顯示)
+const desktopSectionVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { when: "beforeChildren", staggerChildren: 0.1 } } };
+const desktopGridVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: STAGGER_DELAY, delayChildren: 0 } } };
+
+// Mobile 動畫 (簡化版：全部一起淡入)
+const mobileGridVariants: Variants = { 
+  hidden: { opacity: 0, y: 20 }, 
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } 
+};
+
+// 線條動畫 (僅電腦版水平線使用)
 const lineVariants: Variants = { hidden: { scaleX: 0, opacity: 0 }, visible: { scaleX: 1, opacity: 1, transition: { delay: 0.1, duration: LINE_DURATION, ease: "linear" } } };
-const gridVariants: Variants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: STAGGER_DELAY, delayChildren: 0 } } };
+
+// 項目動畫
 const stepItemVariants: Variants = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
+
+// 圓點動畫
 const dotVariants: Variants = { hidden: { scale: 0, opacity: 0 }, visible: { scale: 1, opacity: 1, backgroundColor: "hsl(var(--background))", borderColor: "rgba(255,255,255,1)", transition: { type: "spring", stiffness: 300, damping: 20 } } };
 
 export const ProcessSection = () => {
+  const isMobile = useIsMobile();
+
   return (
-    <section id="process" className="py-16 md:py-24 bg-background relative overflow-hidden min-h-[100dvh] snap-start snap-always scroll-mt-0">
-      <div className="container px-6 mx-auto relative z-10">
-        {/* 修改處：items-end 改為 items-start md:items-end，確保手機版標題置左 */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16">
+    <section id="process" className="py-10 md:py-16 bg-background relative overflow-hidden lg:h-screen lg:min-h-0 lg:py-0 lg:flex lg:flex-col lg:justify-center">
+      <div className="container px-6 mx-auto relative z-10 lg:scale-[0.85] xl:scale-100 lg:origin-center transition-transform duration-300">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-16">
           <div>
-            <motion.span variants={fadeUpVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-sm font-mono text-gray-500 uppercase tracking-widest block mb-4">執行流程</motion.span>
-            <motion.h2 variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: false }} className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight py-2 md:whitespace-nowrap">
+            <motion.h2 
+              variants={revealVariants} 
+              initial="hidden" 
+              whileInView="visible" 
+              viewport={{ once: false }} 
+              className="text-4xl md:text-6xl font-bold tracking-tighter text-white leading-tight py-2 w-fit md:whitespace-nowrap pr-2"
+            >
               從概念到 <span className="text-gray-600">現實。</span>
             </motion.h2>
           </div>
         </div>
 
         <motion.div 
-          className="relative pl-2 md:pl-0" 
-          variants={sectionVariants} 
+          className="relative" 
+          variants={isMobile ? undefined : desktopSectionVariants} // 手機版移除外層 stagger
           initial="hidden" 
           whileInView="visible" 
-          viewport={{ once: false, amount: 0.3 }}
+          viewport={{ once: false, amount: 0.2 }}
         >
+          {/* =======================
+              線條 (Line) 
+             ======================= */}
+          
+          {/* 1. 電腦版水平線 (保持原樣) */}
           <motion.div variants={lineVariants} className="absolute top-3 left-0 w-full h-[2px] bg-[#0071e3] origin-left hidden md:block z-0 shadow-[0_0_10px_rgba(0,113,227,0.8)]" />
 
-          <motion.div variants={gridVariants} className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 border-l border-white/10 md:border-l-0 ml-3 md:ml-0">
+          {/* 2. 手機版垂直線 (新增：模擬 PC 風格的藍線) */}
+          {/* 定位在左側圓點的中心線上 (left-[11px] 對應圓點寬度中心) */}
+          <div className="absolute top-2 left-[11px] w-[2px] h-[calc(100%-20px)] bg-[#0071e3]/50 md:hidden z-0" />
+
+
+          {/* =======================
+              內容網格 (Grid)
+             ======================= */}
+          <motion.div 
+             variants={isMobile ? mobileGridVariants : desktopGridVariants}
+             className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-8"
+          >
             {steps.map((step, index) => (
-              <motion.div key={index} variants={stepItemVariants} className="relative group pl-8 md:pl-0">
-                <motion.div variants={dotVariants} className="absolute -left-[15px] top-0 md:static md:left-auto md:top-auto flex items-center justify-center w-7 h-7 rounded-full border border-white bg-background mb-4 md:mb-8 z-10">
+              <motion.div 
+                key={index} 
+                variants={stepItemVariants} 
+                className="relative group flex flex-col md:block pl-10 md:pl-0"
+              >
+                {/* 圓點 (Dot) 
+                   手機版：absolute left-0 (垂直置中對齊線條)
+                   電腦版：static / absolute (水平對齊線條)
+                */}
+                <motion.div 
+                  variants={dotVariants} 
+                  className="absolute left-0 top-1 md:static md:left-auto md:top-auto flex items-center justify-center w-6 h-6 md:w-7 md:h-7 rounded-full border border-white bg-background z-10 md:mb-8"
+                >
                     <div className="w-1.5 h-1.5 rounded-full bg-[#0071e3]" />
                 </motion.div>
-                <span className="text-4xl md:text-xl font-bold text-[#ffffff] mb-3 md:mb-4 block font-mono md:absolute md:-top-12 md:left-2">
-                  {step.id}
-                </span>
+                
+                {/* 內容區塊 */}
                 <div className="md:border-l md:border-white/10 md:pl-4 transition-all duration-300">
-                  <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#0071e3] transition-colors duration-300">{step.title}</h3>
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider block mb-3">{step.subtitle}</span>
-                  <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">{step.desc}</p>
+                  
+                  {/* ID & Title */}
+                  <div className="flex items-baseline gap-2 mb-1 md:block md:mb-2">
+                    {/* ID: 手機版藍色/小字，電腦版白色/大字/絕對定位 */}
+                    <span className="text-lg font-mono text-white font-bold md:text-[#ffffff] md:text-xl md:absolute md:-top-12 md:left-2 md:block">
+                      /{step.id}
+                    </span>
+                    {/* Title: 手機版 text-lg，電腦版 text-2xl */}
+                    <h3 className="text-lg md:text-2xl font-bold text-white group-hover:text-[#0071e3] transition-colors duration-300">
+                      {step.title}
+                    </h3>
+                  </div>
+
+                  {/* Subtitle */}
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider block mb-2 md:mb-3">
+                    {step.subtitle}
+                  </span>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    {step.desc}
+                  </p>
                 </div>
               </motion.div>
             ))}
